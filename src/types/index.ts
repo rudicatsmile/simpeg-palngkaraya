@@ -395,9 +395,11 @@ export interface AppSettings {
   nama_sub_aplikasi: string;
   slogan: string;
   teks_perkenalan: string;
+  nama_hak_cipta?: string;
   logo_url: string | null;
   favicon_url: string | null;
   updated_at?: string;
   updated_by?: string | null;
 }
+
 

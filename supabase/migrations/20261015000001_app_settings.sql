@@ -9,11 +9,13 @@ create table if not exists public.app_settings (
   nama_sub_aplikasi text not null default 'Kabupaten Nusantara Jaya',
   slogan text not null default 'Transformasi Digital Kepegawaian Terpadu',
   teks_perkenalan text not null default 'Kelola seluruh siklus hidup ASN mulai dari data induk, prediksi kenaikan pangkat tepat waktu, mutasi, penilaian kinerja SKP, hingga persiapan pensiun dalam satu ekosistem self-service yang aman dan prediktif.',
+  nama_hak_cipta text default '© 2026 Pemerintah Kabupaten Nusantara Jaya. Hak Cipta Dilindungi Undang-Undang.',
   logo_url text,
   favicon_url text,
   updated_at timestamptz not null default now(),
   updated_by uuid references auth.users(id)
 );
+
 
 alter table public.app_settings enable row level security;
 
@@ -123,6 +125,7 @@ insert into public.app_settings (
   nama_sub_aplikasi,
   slogan,
   teks_perkenalan,
+  nama_hak_cipta,
   logo_url,
   favicon_url,
   updated_at
@@ -132,7 +135,9 @@ insert into public.app_settings (
   'Kabupaten Nusantara Jaya',
   'Transformasi Digital Kepegawaian Terpadu',
   'Kelola seluruh siklus hidup ASN mulai dari data induk, prediksi kenaikan pangkat tepat waktu, mutasi, penilaian kinerja SKP, hingga persiapan pensiun dalam satu ekosistem self-service yang aman dan prediktif.',
+  '© 2026 Pemerintah Kabupaten Nusantara Jaya. Hak Cipta Dilindungi Undang-Undang.',
   null,
   null,
   now()
 ) on conflict (id) do nothing;
+

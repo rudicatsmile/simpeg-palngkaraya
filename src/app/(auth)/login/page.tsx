@@ -11,6 +11,8 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Lock, Mail, ArrowRight, UserCheck, Eye, EyeOff, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
+import { AuthCopyrightFooter } from "@/components/auth/AuthBranding";
+
 
 function LoginForm() {
   const router = useRouter();
@@ -291,8 +293,13 @@ function LoginForm() {
           </Button>
         </Link>
       </div>
+
+      <div className="text-center pt-2">
+        <AuthCopyrightFooter className="text-muted-foreground/80" />
+      </div>
     </div>
   );
+
 }
 
 export default function LoginPage() {

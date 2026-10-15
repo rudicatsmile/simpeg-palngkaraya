@@ -138,7 +138,10 @@ export function PublicFooter() {
 
         {/* Hak cipta */}
         <div className="pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
-          <p>© {new Date().getFullYear()} BKPSDM {settings.nama_sub_aplikasi}. Hak Cipta Dilindungi Undang-Undang.</p>
+          <p>
+            {settings.nama_hak_cipta ||
+              `© ${new Date().getFullYear()} ${settings.nama_sub_aplikasi}. Hak Cipta Dilindungi Undang-Undang.`}
+          </p>
           <div className="flex gap-4">
             <Link href="/kebijakan-privasi" className="hover:text-primary transition-colors">
               Kebijakan Privasi

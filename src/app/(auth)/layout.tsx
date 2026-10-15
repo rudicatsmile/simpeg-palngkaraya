@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Building2, ShieldCheck, Sparkles, Award } from "lucide-react";
+import { AuthBrandHeader, AuthCopyrightFooter } from "@/components/auth/AuthBranding";
 
 export default function AuthLayout({
   children,
@@ -16,19 +17,7 @@ export default function AuthLayout({
 
         {/* Brand */}
         <div className="relative z-10">
-          <Link href="/" className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white text-primary shadow-lg">
-              <Building2 className="h-6 w-6" />
-            </div>
-            <div>
-              <h1 className="font-heading text-xl font-bold tracking-tight">
-                SIMPEG Daerah
-              </h1>
-              <p className="text-xs text-primary-foreground/80 font-medium">
-                Pemerintah Kabupaten Nusantara Jaya
-              </p>
-            </div>
-          </Link>
+          <AuthBrandHeader />
         </div>
 
         {/* Highlight Value Proposition */}
@@ -60,10 +49,11 @@ export default function AuthLayout({
         </div>
 
         {/* Footer Info */}
-        <div className="relative z-10 text-xs text-primary-foreground/70">
-          © {new Date().getFullYear()} BKPSDM Kabupaten Nusantara Jaya. Hak Cipta Dilindungi.
+        <div className="relative z-10">
+          <AuthCopyrightFooter className="text-primary-foreground/75" />
         </div>
       </div>
+
 
       {/* Kolom Kanan: Konten Form */}
       <div className="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:col-span-7 lg:px-12 xl:px-20">

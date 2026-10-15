@@ -8,6 +8,7 @@ export const DEFAULT_APP_SETTINGS: AppSettings = {
   slogan: "Transformasi Digital Kepegawaian Terpadu",
   teks_perkenalan:
     "Kelola seluruh siklus hidup ASN mulai dari data induk, prediksi kenaikan pangkat tepat waktu, mutasi, penilaian kinerja SKP, hingga persiapan pensiun dalam satu ekosistem self-service yang aman dan prediktif.",
+  nama_hak_cipta: "© 2026 Pemerintah Kabupaten Nusantara Jaya. Hak Cipta Dilindungi Undang-Undang.",
   logo_url: null,
   favicon_url: null,
 };
@@ -41,12 +42,17 @@ export const appSettingsService = {
         return DEFAULT_APP_SETTINGS;
       }
 
+      const defaultCopyright = `© ${new Date().getFullYear()} ${
+        data.nama_sub_aplikasi || DEFAULT_APP_SETTINGS.nama_sub_aplikasi
+      }. Hak Cipta Dilindungi Undang-Undang.`;
+
       return {
         id: data.id || "default",
         nama_aplikasi: data.nama_aplikasi || DEFAULT_APP_SETTINGS.nama_aplikasi,
         nama_sub_aplikasi: data.nama_sub_aplikasi || DEFAULT_APP_SETTINGS.nama_sub_aplikasi,
         slogan: data.slogan || DEFAULT_APP_SETTINGS.slogan,
         teks_perkenalan: data.teks_perkenalan || DEFAULT_APP_SETTINGS.teks_perkenalan,
+        nama_hak_cipta: data.nama_hak_cipta || defaultCopyright,
         logo_url: data.logo_url || null,
         favicon_url: data.favicon_url || null,
         updated_at: data.updated_at,
@@ -56,6 +62,7 @@ export const appSettingsService = {
       return DEFAULT_APP_SETTINGS;
     }
   },
+
 
   /**
    * Memperbarui konfigurasi atribut aplikasi (Khusus Administrator).
