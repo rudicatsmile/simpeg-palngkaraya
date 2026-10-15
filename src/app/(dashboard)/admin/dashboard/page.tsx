@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useDashboardStats, usePerubahanDataList, useUsulanPangkatList, useCutiList } from "@/services";
+import { useAppSettings } from "@/hooks/useAppSettings";
+
 import {
   Users,
   Award,
@@ -23,6 +25,7 @@ import { Badge } from "@/components/ui/badge";
 
 export default function AdminDashboardPage() {
   const { stats, loading: loadingStats } = useDashboardStats();
+  const { settings } = useAppSettings();
   const { data: perubahanDataList, loading: loadingPerubahan } = usePerubahanDataList();
   const { data: usulanPangkatList } = useUsulanPangkatList();
   const { data: cutiList } = useCutiList();
@@ -43,7 +46,7 @@ export default function AdminDashboardPage() {
             Pusat Kendali Manajemen Kepegawaian Daerah
           </h1>
           <p className="text-xs sm:text-sm text-slate-200">
-            Pemerintah Kabupaten Nusantara Jaya • Terhubung Langsung ke Pangkalan Data Supabase PostgreSQL
+            {settings.nama_pemda || settings.nama_sub_aplikasi || "Pemerintah Daerah"} • Terhubung Langsung ke Pangkalan Data Supabase PostgreSQL
           </p>
         </div>
       </div>

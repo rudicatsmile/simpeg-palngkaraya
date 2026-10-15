@@ -1,6 +1,7 @@
 "use client";
 
 import { usePegawaiList } from "@/services";
+import { useAppSettings } from "@/hooks/useAppSettings";
 import { QrCode, Download, Printer, ShieldCheck, Building2, CheckCircle2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,7 +11,9 @@ import { toast } from "sonner";
 
 export default function QrIdentitasPage() {
   const { data: pegawaiList } = usePegawaiList();
+  const { settings } = useAppSettings();
   const pegawai = pegawaiList[0] || {
+
     id: "e1a1b1c1-0001-4000-8000-000000000001",
     nama_lengkap: "Budi Santoso",
     gelar_depan: "Dr.",
@@ -55,12 +58,26 @@ export default function QrIdentitasPage() {
             {/* Header Kartu */}
             <div className="flex items-center justify-between border-b border-white/20 pb-4">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-primary font-bold shadow-md">
-                  <Building2 className="h-6 w-6" />
-                </div>
+                {settings.logo_url ? (
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white p-1 shadow-md overflow-hidden">
+                    <img
+                      src={settings.logo_url}
+                      alt={settings.nama_pemda || "Logo"}
+                      className="h-full w-full object-contain"
+                    />
+                  </div>
+                ) : (
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-primary font-bold shadow-md">
+                    <Building2 className="h-6 w-6" />
+                  </div>
+                )}
                 <div>
                   <h3 className="font-heading font-extrabold text-sm tracking-wide">
-                    PEMERINTAH KABUPATEN NUSANTARA JAYA
+                    {settings.nama_pemda
+                      ? settings.nama_pemda.toUpperCase()
+                      : settings.nama_sub_aplikasi
+                      ? `PEMERINTAH ${settings.nama_sub_aplikasi.toUpperCase()}`
+                      : "PEMERINTAH DAERAH"}
                   </h3>
                   <p className="text-[10px] text-white/80 font-medium">
                     KARTU IDENTITAS APARATUR SIPIL NEGARA
@@ -68,6 +85,7 @@ export default function QrIdentitasPage() {
                 </div>
               </div>
             </div>
+
 
             {/* Bagian Profil & QR Code */}
             <div className="grid grid-cols-12 gap-4 items-center">

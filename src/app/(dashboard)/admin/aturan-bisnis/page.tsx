@@ -5,9 +5,11 @@ import { Sliders, Save, CheckCircle2, ShieldAlert } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useAppSettings } from "@/hooks/useAppSettings";
 import { toast } from "sonner";
 
 export default function PengaturanAturanBisnisPage() {
+  const { settings } = useAppSettings();
   const [bupPns, setBupPns] = useState(58);
   const [jatahCuti, setJatahCuti] = useState(12);
   const [jamKeterlambatan, setJamKeterlambatan] = useState("07:30");
@@ -30,9 +32,10 @@ export default function PengaturanAturanBisnisPage() {
           Konfigurasi Aturan Bisnis Sistem (Business Rules Engine)
         </h1>
         <p className="text-xs text-muted-foreground">
-          Pengaturan ambang batas dan parameter kebijakan kepegawaian yang berlaku di Kabupaten Nusantara Jaya.
+          Pengaturan ambang batas dan parameter kebijakan kepegawaian yang berlaku di {settings.nama_pemda || settings.nama_sub_aplikasi || "Pemerintah Daerah"}.
         </p>
       </div>
+
 
       <form onSubmit={handleSave} className="space-y-6 text-xs">
         {/* Usia Pensiun & Cuti */}

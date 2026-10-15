@@ -24,7 +24,8 @@ export type StatusPegawai =
   | "cuti_besar"
   | "diberhentikan"
   | "pensiun"
-  | "meninggal";
+  | "meninggal"
+  | (string & {});
 
 export type StatusCuti =
   | "draft"
@@ -33,7 +34,8 @@ export type StatusCuti =
   | "disetujui_kepala_pd"
   | "ditolak"
   | "dibatalkan"
-  | "selesai";
+  | "selesai"
+  | (string & {});
 
 export type StatusWorkflow =
   | "draft"
@@ -41,9 +43,10 @@ export type StatusWorkflow =
   | "verifikasi"
   | "disetujui"
   | "ditolak"
-  | "selesai";
+  | "selesai"
+  | (string & {});
 
-export type JenisDisiplin = "ringan" | "sedang" | "berat";
+export type JenisDisiplin = "ringan" | "sedang" | "berat" | (string & {});
 
 export type StatusAbsensi =
   | "hadir"
@@ -52,9 +55,10 @@ export type StatusAbsensi =
   | "sakit"
   | "cuti"
   | "alpha"
-  | "dinas_luar";
+  | "dinas_luar"
+  | (string & {});
 
-export type StatusSKP = "draft" | "ditetapkan" | "dinilai" | "final";
+export type StatusSKP = "draft" | "ditetapkan" | "dinilai" | "final" | (string & {});
 
 export type KesiapanTalenta =
   | "siap_sekarang"
@@ -66,14 +70,17 @@ export interface PerangkatDaerah {
   kode: string;
   nama: string;
   parent_id?: string | null;
+  status?: "aktif" | "nonaktif" | string;
   created_at: string;
+  updated_at?: string;
 }
+
 
 export interface Jabatan {
   id: string;
   kode: string;
   nama: string;
-  jenis: "struktural" | "fungsional" | "pelaksana";
+  jenis: "struktural" | "fungsional" | "pelaksana" | (string & {});
   eselon?: string | null;
   pd_id?: string | null;
   syarat_kompetensi: string[];
@@ -91,8 +98,8 @@ export interface Pegawai {
   gelar_belakang?: string;
   tempat_lahir: string;
   tanggal_lahir: string;
-  jenis_kelamin: "L" | "P";
-  status_kepegawaian: "PNS" | "PPPK";
+  jenis_kelamin: "L" | "P" | (string & {});
+  status_kepegawaian: "PNS" | "PPPK" | (string & {});
   golongan: string;
   pangkat: string;
   tmt_golongan: string;
@@ -153,7 +160,7 @@ export interface UsulanKenaikanPangkat {
   golongan_asal: string;
   golongan_tujuan: string;
   pangkat_asal?: string;
-  jenis: "reguler" | "pilihan" | "kgb";
+  jenis: "reguler" | "pilihan" | "kgb" | (string & {});
   tmt_usulan: string;
   status: StatusWorkflow;
   checklist_status: {
@@ -182,7 +189,7 @@ export interface Mutasi {
   pegawai_id: string;
   pegawai_nama?: string;
   nip?: string;
-  jenis: "mutasi" | "rotasi" | "promosi";
+  jenis: "mutasi" | "rotasi" | "promosi" | (string & {});
   pd_asal_id: string;
   pd_asal_nama: string;
   pd_tujuan_id: string;
@@ -225,7 +232,7 @@ export interface SKP {
   tahun: number;
   status: StatusSKP;
   nilai_akhir?: number;
-  predikat?: "Sangat Baik" | "Baik" | "Cukup" | "Kurang" | "Sangat Kurang";
+  predikat?: "Sangat Baik" | "Baik" | "Cukup" | "Kurang" | "Sangat Kurang" | (string & {});
   targets: SKPTarget[];
 }
 
@@ -233,7 +240,7 @@ export interface SKPTarget {
   id: string;
   skp_id: string;
   uraian: string;
-  aspek: "kuantitas" | "kualitas" | "waktu" | "biaya";
+  aspek: "kuantitas" | "kualitas" | "waktu" | "biaya" | (string & {});
   target: number;
   realisasi: number;
   satuan: string;
@@ -262,7 +269,7 @@ export interface Cuti {
   pegawai_nip?: string;
   nip?: string;
   pd_nama?: string;
-  jenis: "tahunan" | "besar" | "sakit" | "melahirkan" | "alasan_penting" | "di_luar_tanggungan";
+  jenis: "tahunan" | "besar" | "sakit" | "melahirkan" | "alasan_penting" | "di_luar_tanggungan" | (string & {});
   tanggal_mulai: string;
   tanggal_selesai: string;
   jumlah_hari: number;
@@ -306,7 +313,7 @@ export interface PegawaiDiklat {
 export interface Kompetensi {
   id: string;
   nama: string;
-  jenis: "Manajerial" | "Sosio Kultural" | "Teknis";
+  jenis: "Manajerial" | "Sosio Kultural" | "Teknis" | (string & {});
 }
 
 export interface HukumanDisiplin {
@@ -321,7 +328,7 @@ export interface HukumanDisiplin {
   masa_berlaku_bulan: number;
   dampak_pangkat: boolean;
   dampak_jabatan: boolean;
-  status: "aktif" | "berakhir";
+  status: "aktif" | "berakhir" | (string & {});
   keterangan: string;
 }
 
@@ -330,7 +337,7 @@ export interface PensiunChecklist {
   pegawai_id: string;
   pegawai_nama?: string;
   item: string;
-  status: "belum" | "proses" | "lengkap";
+  status: "belum" | "proses" | "lengkap" | (string & {});
   keterangan?: string;
 }
 
@@ -338,14 +345,14 @@ export interface Dokumen {
   id: string;
   pegawai_id?: string;
   pegawai_nama?: string;
-  kategori: "SK CPNS/PNS" | "SK Pangkat" | "SK Jabatan" | "Ijazah" | "KTP" | "Sertifikat" | "Surat Cuti" | "Lainnya";
+  kategori: "SK CPNS/PNS" | "SK Pangkat" | "SK Jabatan" | "Ijazah" | "KTP" | "Sertifikat" | "Surat Cuti" | "Lainnya" | (string & {});
   judul: string;
   storage_path: string;
   file_path?: string;
   versi: number;
   checksum: string;
   status_persetujuan: StatusWorkflow;
-  ttd_status: "belum" | "internal" | "tte";
+  ttd_status: "belum" | "internal" | "tte" | (string & {});
   uploaded_by?: string;
   created_at: string;
 }
@@ -366,7 +373,7 @@ export interface TalentPool {
 export interface Notifikasi {
   id: string;
   user_id: string;
-  kategori: "Kepangkatan" | "Cuti" | "Disiplin" | "Kinerja" | "Pensiun" | "Sistem";
+  kategori: "Kepangkatan" | "Cuti" | "Disiplin" | "Kinerja" | "Pensiun" | "Sistem" | (string & {});
   judul: string;
   pesan: string;
   tautan?: string;
@@ -403,9 +410,48 @@ export interface AppSettings {
   jam_operasional_sekretariat?: string;
   logo_url: string | null;
   favicon_url: string | null;
+
+  // Profil Pemda & BKPSDM
+  nama_pemda?: string;
+  singkatan_bkd?: string;
+  nama_bkd?: string;
+  alamat_kantor?: string;
+  email_dinas?: string;
+  no_telepon?: string;
+  whatsapp_helpdesk?: string;
+  situs_web?: string;
+
+  // Waktu, Regional & Keamanan
+  zona_waktu?: string;
+  format_tanggal?: string;
+  tahun_anggaran?: string;
+  toleransi_keterlambatan_menit?: string;
+  auto_lock_session_menit?: string;
+  enforce_mfa_admin?: boolean;
+  instansi_config?: Record<string, any>;
+
   updated_at?: string;
   updated_by?: string | null;
 }
 
+export interface MasterReferensi {
+  id: string;
+  kategori: string;
+  kode: string;
+  nama: string;
+  deskripsi?: string;
+  urutan: number;
+  badge_color?: string;
+  is_active: boolean;
+  is_system?: boolean;
+  metadata?: Record<string, any>;
+  created_at?: string;
+  updated_at?: string;
+}
 
-
+export interface MasterKategoriInfo {
+  kategori: string;
+  nama: string;
+  deskripsi: string;
+  count?: number;
+}

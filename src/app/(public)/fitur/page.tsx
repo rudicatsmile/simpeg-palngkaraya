@@ -19,9 +19,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 export const metadata = {
-  title: "Fitur Unggulan | SIMPEG Daerah Kabupaten Nusantara Jaya",
+  title: "Fitur Unggulan | SIMPEG Daerah",
   description: "Daftar modul fungsional lengkap SIMPEG Daerah dari kepangkatan H-180 hingga perencanaan formasi dan suksesi.",
 };
+
 
 export default function FiturPage() {
   const modules = [

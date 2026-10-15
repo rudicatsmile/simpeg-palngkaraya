@@ -22,7 +22,7 @@ interface UserAccount {
   nip: string;
   email: string;
   role: UserRole;
-  pdScope: string;
+  pdId: string; // Menyimpan ID Perangkat Daerah (UUID) dari master Supabase atau "global"
   isActive: boolean;
   lastLogin: string;
 }
@@ -34,7 +34,7 @@ const INITIAL_USERS: UserAccount[] = [
     nip: "197805122002121003",
     email: "budi.santoso@nusantarajaya.go.id",
     role: "admin",
-    pdScope: "Semua Perangkat Daerah (Global)",
+    pdId: "global",
     isActive: true,
     lastLogin: "12 Okt 2026, 14:20 WIB"
   },
@@ -44,7 +44,7 @@ const INITIAL_USERS: UserAccount[] = [
     nip: "198503152009032008",
     email: "siti.rahmawati@nusantarajaya.go.id",
     role: "operator_pd",
-    pdScope: "Dinas Pendidikan",
+    pdId: "d1a1b1c1-0002-4000-8000-000000000002",
     isActive: true,
     lastLogin: "12 Okt 2026, 11:05 WIB"
   },
@@ -54,7 +54,7 @@ const INITIAL_USERS: UserAccount[] = [
     nip: "197108201995121001",
     email: "hendro.wibowo@nusantarajaya.go.id",
     role: "kepala_pd",
-    pdScope: "Dinas Pendidikan",
+    pdId: "d1a1b1c1-0002-4000-8000-000000000002",
     isActive: true,
     lastLogin: "11 Okt 2026, 09:30 WIB"
   },
@@ -64,7 +64,7 @@ const INITIAL_USERS: UserAccount[] = [
     nip: "198204102005011004",
     email: "ahmad.dahlan@nusantarajaya.go.id",
     role: "atasan",
-    pdScope: "Dinas Pendidikan (Bidang Ketenagaan)",
+    pdId: "d1a1b1c1-0002-4000-8000-000000000002",
     isActive: true,
     lastLogin: "12 Okt 2026, 13:45 WIB"
   },
@@ -74,7 +74,7 @@ const INITIAL_USERS: UserAccount[] = [
     nip: "196611051991031002",
     email: "joko.purnomo@nusantarajaya.go.id",
     role: "pegawai",
-    pdScope: "Dinas Kesehatan",
+    pdId: "d1a1b1c1-0003-4000-8000-000000000003",
     isActive: true,
     lastLogin: "08 Okt 2026, 16:10 WIB"
   },
@@ -84,7 +84,7 @@ const INITIAL_USERS: UserAccount[] = [
     nip: "199402282019032007",
     email: "dewi.lestari@nusantarajaya.go.id",
     role: "pegawai",
-    pdScope: "Dinas Kesehatan",
+    pdId: "d1a1b1c1-0003-4000-8000-000000000003",
     isActive: true,
     lastLogin: "12 Okt 2026, 08:00 WIB"
   },
@@ -94,7 +94,7 @@ const INITIAL_USERS: UserAccount[] = [
     nip: "196801011993031005",
     email: "sekda@nusantarajaya.go.id",
     role: "pimpinan_tinggi",
-    pdScope: "Pemerintah Kabupaten (Sekretariat Daerah)",
+    pdId: "d1a1b1c1-0007-4000-8000-000000000007",
     isActive: true,
     lastLogin: "10 Okt 2026, 10:15 WIB"
   },
@@ -104,14 +104,14 @@ const INITIAL_USERS: UserAccount[] = [
     nip: "197509141999031002",
     email: "inspektorat.rudi@nusantarajaya.go.id",
     role: "auditor",
-    pdScope: "Inspektorat Daerah",
+    pdId: "d1a1b1c1-0006-4000-8000-000000000006",
     isActive: true,
     lastLogin: "12 Okt 2026, 15:10 WIB"
   }
 ];
 
 export default function ManajemenPenggunaPage() {
-  const { data: pdList } = usePerangkatDaerahList();
+  const { data: pdList } = usePerangkatDaerahList(true);
   const { data: pegawaiList } = usePegawaiList();
   const [users, setUsers] = useState<UserAccount[]>(INITIAL_USERS);
   const [search, setSearch] = useState("");
@@ -124,7 +124,40 @@ export default function ManajemenPenggunaPage() {
   const [inviteNip, setInviteNip] = useState("");
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteRole, setInviteRole] = useState<UserRole>("pegawai");
-  const [invitePd, setInvitePd] = useState("Dinas Pendidikan");
+  const [invitePdId, setInvitePdId] = useState<string>("global");
+
+  // Sinkronkan nama dan pdId pengguna dengan data pegawai Supabase jika tersedia
+  React.useEffect(() => {
+    if (pegawaiList && pegawaiList.length > 0) {
+      setUsers((prev) =>
+        prev.map((user) => {
+          const matched = pegawaiList.find((p) => p.nip === user.nip);
+          if (matched) {
+            return {
+              ...user,
+              name: matched.nama_lengkap || user.name,
+              email: matched.email || user.email,
+              pdId: user.pdId === "global" ? "global" : (matched.pd_id || user.pdId),
+            };
+          }
+          return user;
+        })
+      );
+    }
+  }, [pegawaiList]);
+
+  // Helper resolusi nama Perangkat Daerah dari ID master
+  const getPdDisplayName = (pdId: string) => {
+    if (!pdId || pdId === "global" || pdId === "Semua Perangkat Daerah (Global)") {
+      return "Semua Perangkat Daerah (Global)";
+    }
+    const found = pdList.find((p) => p.id === pdId);
+    if (found) {
+      return found.kode ? `${found.nama} (${found.kode})` : found.nama;
+    }
+    return pdId;
+  };
+
 
   // Filtered users
   const filteredUsers = users.filter((u) => {
@@ -168,7 +201,7 @@ export default function ManajemenPenggunaPage() {
       nip: inviteNip,
       email: inviteEmail,
       role: inviteRole,
-      pdScope: invitePd,
+      pdId: invitePdId,
       isActive: true,
       lastLogin: "Belum pernah login"
     };
@@ -178,7 +211,9 @@ export default function ManajemenPenggunaPage() {
     setIsInviteOpen(false);
     setInviteNip("");
     setInviteEmail("");
+    setInvitePdId("global");
   };
+
 
   const handleUpdateRole = () => {
     if (!selectedUser) return;
@@ -339,10 +374,10 @@ export default function ManajemenPenggunaPage() {
                       <td className="py-3.5 px-4">
                         {getRoleBadge(user.role)}
                       </td>
-                      <td className="py-3.5 px-4 text-slate-600 max-w-[200px] truncate" title={user.pdScope}>
+                      <td className="py-3.5 px-4 text-slate-600 max-w-[200px] truncate" title={getPdDisplayName(user.pdId)}>
                         <div className="flex items-center gap-1.5">
                           <Building2 className="h-3.5 w-3.5 text-slate-400 shrink-0" />
-                          <span>{user.pdScope}</span>
+                          <span>{getPdDisplayName(user.pdId)}</span>
                         </div>
                       </td>
                       <td className="py-3.5 px-4 text-slate-500">
@@ -409,12 +444,20 @@ export default function ManajemenPenggunaPage() {
               <Input
                 placeholder="18 digit NIP..."
                 value={inviteNip}
-                onChange={(e) => setInviteNip(e.target.value)}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setInviteNip(val);
+                  const matched = pegawaiList.find((p) => p.nip === val.trim());
+                  if (matched) {
+                    if (matched.email && !inviteEmail) setInviteEmail(matched.email);
+                    if (matched.pd_id) setInvitePdId(matched.pd_id);
+                  }
+                }}
                 maxLength={18}
                 required
               />
               <p className="text-[11px] text-slate-500 mt-1">
-                Data nama pegawai akan otomatis disinkronkan dari database kepegawaian.
+                Data nama pegawai dan unit kerja akan otomatis disinkronkan dari database kepegawaian.
               </p>
             </div>
             <div>
@@ -446,15 +489,21 @@ export default function ManajemenPenggunaPage() {
             <div>
               <label className="text-xs font-semibold text-slate-700 block mb-1">Lingkup Perangkat Daerah (PD Scope) *</label>
               <select
-                value={invitePd}
-                onChange={(e) => setInvitePd(e.target.value)}
-                className="w-full text-xs border border-slate-200 rounded-lg p-2.5 bg-white text-slate-800"
+                value={invitePdId}
+                onChange={(e) => setInvitePdId(e.target.value)}
+                className="w-full text-xs border border-slate-200 rounded-lg p-2.5 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                required
               >
-                <option value="Semua Perangkat Daerah (Global)">Semua Perangkat Daerah (Global Admin)</option>
+                <option value="global">Semua Perangkat Daerah (Global Admin)</option>
                 {pdList.map((inst) => (
-                  <option key={inst.id} value={inst.nama}>{inst.nama}</option>
+                  <option key={inst.id} value={inst.id}>
+                    {inst.kode ? `[${inst.kode}] ` : ""}{inst.nama}
+                  </option>
                 ))}
               </select>
+              <p className="text-[11px] text-slate-500 mt-1">
+                Data dinamis dari database Supabase (hanya Perangkat Daerah aktif).
+              </p>
             </div>
             <DialogFooter className="pt-2">
               <Button type="button" variant="outline" onClick={() => setIsInviteOpen(false)}>
@@ -505,13 +554,15 @@ export default function ManajemenPenggunaPage() {
               <div>
                 <label className="text-xs font-semibold text-slate-700 block mb-1">Lingkup Unit Kerja (PD Scope)</label>
                 <select
-                  value={selectedUser.pdScope}
-                  onChange={(e) => setSelectedUser({ ...selectedUser, pdScope: e.target.value })}
-                  className="w-full text-xs border border-slate-200 rounded-lg p-2.5 bg-white text-slate-800"
+                  value={selectedUser.pdId}
+                  onChange={(e) => setSelectedUser({ ...selectedUser, pdId: e.target.value })}
+                  className="w-full text-xs border border-slate-200 rounded-lg p-2.5 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 >
-                  <option value="Semua Perangkat Daerah (Global)">Semua Perangkat Daerah (Global / Admin)</option>
+                  <option value="global">Semua Perangkat Daerah (Global / Admin)</option>
                   {pdList.map((inst) => (
-                    <option key={inst.id} value={inst.nama}>{inst.nama}</option>
+                    <option key={inst.id} value={inst.id}>
+                      {inst.kode ? `[${inst.kode}] ` : ""}{inst.nama}
+                    </option>
                   ))}
                 </select>
                 <p className="text-[11px] text-slate-500 mt-1">

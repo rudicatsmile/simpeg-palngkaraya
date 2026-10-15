@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { pegawaiService } from "@/services";
 import { Pegawai } from "@/types";
+import { useAppSettings } from "@/hooks/useAppSettings";
 import { ShieldCheck, Building2, UserCheck, AlertCircle, CheckCircle2, QrCode, Loader2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +14,8 @@ import { Button } from "@/components/ui/button";
 export default function VerifikasiQRPage() {
   const params = useParams();
   const token = params?.token as string;
+  const { settings } = useAppSettings();
+
 
   const [pegawai, setPegawai] = useState<Pegawai | null>(null);
   const [loading, setLoading] = useState(true);
@@ -75,7 +78,7 @@ export default function VerifikasiQRPage() {
             Status Identitas Kepegawaian
           </h1>
           <p className="text-xs text-muted-foreground">
-            Informasi di bawah ini diterbitkan langsung oleh Badan Kepegawaian dan Pengembangan Sumber Daya Manusia (BKPSDM) Kabupaten Nusantara Jaya.
+            Informasi di bawah ini diterbitkan langsung oleh {settings.nama_bkd || "Badan Kepegawaian dan Pengembangan Sumber Daya Manusia (BKPSDM)"} {settings.nama_pemda || settings.nama_sub_aplikasi || "Pemerintah Daerah"}.
           </p>
         </div>
 
@@ -93,9 +96,10 @@ export default function VerifikasiQRPage() {
               <h2 className="font-heading text-2xl font-black">TERVERIFIKASI ASLI & AKTIF</h2>
             </div>
             <p className="text-[11px] text-emerald-100/90">
-              Sesuai Pangkalan Data Terpadu BKPSDM Kab. Nusantara Jaya
+              Sesuai Pangkalan Data Terpadu {settings.singkatan_bkd || "BKPSDM"} {settings.nama_pemda || settings.nama_sub_aplikasi || ""}
             </p>
           </div>
+
 
           <CardContent className="p-6 space-y-5">
             {/* Profil Ringkas Aman (Non-sensitif) */}

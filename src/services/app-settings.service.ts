@@ -3,19 +3,38 @@ import { AppSettings } from "@/types";
 
 export const DEFAULT_APP_SETTINGS: AppSettings = {
   id: "default",
-  nama_aplikasi: "SIMPEG Daerah",
-  nama_sub_aplikasi: "Kabupaten Nusantara Jaya",
-  slogan: "Transformasi Digital Kepegawaian Terpadu",
+  nama_aplikasi: "SIMPEG",
+  nama_sub_aplikasi: "Kota Palangkaraya",
+  slogan: "Transformasi Pengelolaan Digital Kepegawaian",
   teks_perkenalan:
     "Kelola seluruh siklus hidup ASN mulai dari data induk, prediksi kenaikan pangkat tepat waktu, mutasi, penilaian kinerja SKP, hingga persiapan pensiun dalam satu ekosistem self-service yang aman dan prediktif.",
-  nama_hak_cipta: "© 2026 Pemerintah Kabupaten Nusantara Jaya. Hak Cipta Dilindungi Undang-Undang.",
+  nama_hak_cipta: "© 2026 Pemerintah Kota Palangkaraya. Hak Cipta Dilindungi Undang-Undang.",
   nama_sekretariat: "Sekretariat BKPSDM",
-  alamat_sekretariat: "Jl. Praja Prajamukti No. 1, Kompleks Perkantoran Pemkab Nusantara Jaya",
-  telepon_sekretariat: "(021) 8765-4321 / 0812-3456-7890",
-  email_sekretariat: "bkpsdm@nusantarajaya.go.id",
+  alamat_sekretariat: "Jl. Tjilik Riwut No. 98, Kompleks Perkantoran Pemkot Palangkaraya 73112",
+  telepon_sekretariat: "(0536) 3221234 / 0812-3456-7890",
+  email_sekretariat: "bkpsdm@palangkaraya.go.id",
   jam_operasional_sekretariat: "Senin - Jumat: 07.30 - 16.00 WIB",
   logo_url: null,
   favicon_url: null,
+
+  // Profil Pemda & BKPSDM
+  nama_pemda: "Pemerintah Kota Palangkaraya",
+  singkatan_bkd: "BKPSDM Kota Palangkaraya",
+  nama_bkd: "Badan Kepegawaian dan Pengembangan Sumber Daya Manusia (BKPSDM)",
+  alamat_kantor: "Jl. Tjilik Riwut No. 98, Kompleks Perkantoran Pemkot Palangkaraya 73112",
+  email_dinas: "bkpsdm@palangkaraya.go.id",
+  no_telepon: "(0536) 3221234",
+  whatsapp_helpdesk: "0812-3456-7890",
+  situs_web: "https://bkpsdm.palangkaraya.go.id",
+
+  // Waktu & Keamanan
+  zona_waktu: "WIB (Asia/Jakarta, UTC+7)",
+  format_tanggal: "DD/MM/YYYY",
+  tahun_anggaran: "2026",
+  toleransi_keterlambatan_menit: "15",
+  auto_lock_session_menit: "30",
+  enforce_mfa_admin: true,
+  instansi_config: {},
 };
 
 const ALLOWED_MIME_TYPES = [
@@ -43,13 +62,27 @@ export const appSettingsService = {
         .eq("id", "default")
         .maybeSingle();
 
+      // Periksa apakah ada cache lokal (jika migration SQL belum dijalankan di Supabase)
+      let localCache: any = {};
+      if (typeof window !== "undefined") {
+        try {
+          const cached = window.localStorage.getItem("esimpeg_app_settings_local_cache");
+          if (cached) localCache = JSON.parse(cached);
+        } catch {}
+      }
+
       if (error || !data) {
-        return DEFAULT_APP_SETTINGS;
+        return {
+          ...DEFAULT_APP_SETTINGS,
+          ...localCache,
+        };
       }
 
       const defaultCopyright = `© ${new Date().getFullYear()} ${
         data.nama_sub_aplikasi || DEFAULT_APP_SETTINGS.nama_sub_aplikasi
       }. Hak Cipta Dilindungi Undang-Undang.`;
+
+      const cfg = data.instansi_config || {};
 
       return {
         id: data.id || "default",
@@ -66,6 +99,103 @@ export const appSettingsService = {
           data.jam_operasional_sekretariat || DEFAULT_APP_SETTINGS.jam_operasional_sekretariat,
         logo_url: data.logo_url || null,
         favicon_url: data.favicon_url || null,
+
+        // Profil Pemda & BKPSDM
+        nama_pemda:
+          data.nama_pemda ||
+          localCache.nama_pemda ||
+          localCache.namaPemda ||
+          cfg.namaPemda ||
+          (data.nama_sub_aplikasi ? `Pemerintah ${data.nama_sub_aplikasi}` : undefined) ||
+          DEFAULT_APP_SETTINGS.nama_pemda,
+        singkatan_bkd:
+          data.singkatan_bkd ||
+          localCache.singkatan_bkd ||
+          localCache.singkatanBkd ||
+          cfg.singkatanBkd ||
+          (data.nama_sub_aplikasi ? `BKPSDM ${data.nama_sub_aplikasi}` : undefined) ||
+          DEFAULT_APP_SETTINGS.singkatan_bkd,
+        nama_bkd:
+          data.nama_bkd ||
+          localCache.nama_bkd ||
+          localCache.namaBkd ||
+          cfg.namaBkd ||
+          DEFAULT_APP_SETTINGS.nama_bkd,
+        alamat_kantor:
+          data.alamat_kantor ||
+          localCache.alamat_kantor ||
+          localCache.alamat ||
+          cfg.alamat ||
+          data.alamat_sekretariat ||
+          DEFAULT_APP_SETTINGS.alamat_kantor,
+        email_dinas:
+          data.email_dinas ||
+          localCache.email_dinas ||
+          localCache.emailDinas ||
+          cfg.emailDinas ||
+          data.email_sekretariat ||
+          DEFAULT_APP_SETTINGS.email_dinas,
+        no_telepon:
+          data.no_telepon ||
+          localCache.no_telepon ||
+          localCache.noTelepon ||
+          cfg.noTelepon ||
+          data.telepon_sekretariat ||
+          DEFAULT_APP_SETTINGS.no_telepon,
+        whatsapp_helpdesk:
+          data.whatsapp_helpdesk ||
+          localCache.whatsapp_helpdesk ||
+          localCache.whatsappHelpdesk ||
+          cfg.whatsappHelpdesk ||
+          DEFAULT_APP_SETTINGS.whatsapp_helpdesk,
+        situs_web:
+          data.situs_web ||
+          localCache.situs_web ||
+          localCache.situsWeb ||
+          cfg.situsWeb ||
+          DEFAULT_APP_SETTINGS.situs_web,
+
+        // Waktu & Keamanan
+        zona_waktu:
+          data.zona_waktu ||
+          localCache.zona_waktu ||
+          localCache.zonaWaktu ||
+          cfg.zonaWaktu ||
+          DEFAULT_APP_SETTINGS.zona_waktu,
+        format_tanggal:
+          data.format_tanggal ||
+          localCache.format_tanggal ||
+          localCache.formatTanggal ||
+          cfg.formatTanggal ||
+          DEFAULT_APP_SETTINGS.format_tanggal,
+        tahun_anggaran:
+          data.tahun_anggaran ||
+          localCache.tahun_anggaran ||
+          localCache.tahunAnggaran ||
+          cfg.tahunAnggaran ||
+          DEFAULT_APP_SETTINGS.tahun_anggaran,
+        toleransi_keterlambatan_menit:
+          data.toleransi_keterlambatan_menit ||
+          localCache.toleransi_keterlambatan_menit ||
+          localCache.toleransiKeterlambatanMenit ||
+          cfg.toleransiKeterlambatanMenit ||
+          DEFAULT_APP_SETTINGS.toleransi_keterlambatan_menit,
+        auto_lock_session_menit:
+          data.auto_lock_session_menit ||
+          localCache.auto_lock_session_menit ||
+          localCache.autoLockSessionMenit ||
+          cfg.autoLockSessionMenit ||
+          DEFAULT_APP_SETTINGS.auto_lock_session_menit,
+        enforce_mfa_admin:
+          data.enforce_mfa_admin !== undefined
+            ? data.enforce_mfa_admin
+            : localCache.enforce_mfa_admin !== undefined
+            ? localCache.enforce_mfa_admin
+            : cfg.enforceMfaAdmin !== undefined
+            ? cfg.enforceMfaAdmin
+            : DEFAULT_APP_SETTINGS.enforce_mfa_admin,
+        instansi_config: cfg,
+
         updated_at: data.updated_at,
         updated_by: data.updated_by,
       };
@@ -74,14 +204,12 @@ export const appSettingsService = {
     }
   },
 
-
-
   /**
    * Memperbarui konfigurasi atribut aplikasi (Khusus Administrator).
    */
   async update(
     payload: Partial<Omit<AppSettings, "id" | "updated_at">>
-  ): Promise<{ data: AppSettings | null; error: any }> {
+  ): Promise<{ data: AppSettings | null; error: any; needsMigration?: boolean }> {
     try {
       const supabase = createClient();
       const {
@@ -95,23 +223,81 @@ export const appSettingsService = {
         updated_by: user?.id || null,
       };
 
+      // 1. Coba update langsung ke database Supabase
       const { data, error } = await supabase
         .from("app_settings")
         .upsert(updateData, { onConflict: "id" })
         .select()
         .single();
 
-      if (error) {
-        console.error("Gagal memperbarui app_settings:", error);
-        return { data: null, error };
+      if (!error && data) {
+        if (typeof window !== "undefined") {
+          window.localStorage.removeItem("esimpeg_app_settings_local_cache");
+          window.dispatchEvent(new CustomEvent("app-settings-updated", { detail: data }));
+        }
+        return { data, error: null };
       }
 
-      // Trigger event storage agar tab/halaman lain dapat merefresh otomatis
-      if (typeof window !== "undefined") {
-        window.dispatchEvent(new CustomEvent("app-settings-updated", { detail: data }));
+      // 2. Jika kolom baru belum ada di Supabase (misal belum menjalankan migration 08)
+      if (
+        error &&
+        (error.code === "PGRST204" ||
+          error.code === "42703" ||
+          error.message?.toLowerCase().includes("column") ||
+          error.message?.toLowerCase().includes("schema cache"))
+      ) {
+        console.warn(
+          "Kolom profil belum terdaftar di schema Supabase. Menyimpan ke kolom standar & cache lokal...",
+          error.message
+        );
+
+        // Simpan kolom-kolom standar yang sudah ada di tabel app_settings
+        const fallbackPayload: Record<string, any> = {
+          id: "default",
+          updated_at: new Date().toISOString(),
+          updated_by: user?.id || null,
+        };
+
+        if (payload.nama_aplikasi) fallbackPayload.nama_aplikasi = payload.nama_aplikasi;
+        if (payload.nama_sub_aplikasi) fallbackPayload.nama_sub_aplikasi = payload.nama_sub_aplikasi;
+        if (payload.slogan) fallbackPayload.slogan = payload.slogan;
+        if (payload.teks_perkenalan) fallbackPayload.teks_perkenalan = payload.teks_perkenalan;
+        if (payload.nama_hak_cipta) fallbackPayload.nama_hak_cipta = payload.nama_hak_cipta;
+        if (payload.nama_sekretariat) fallbackPayload.nama_sekretariat = payload.nama_sekretariat;
+        if (payload.logo_url !== undefined) fallbackPayload.logo_url = payload.logo_url;
+        if (payload.favicon_url !== undefined) fallbackPayload.favicon_url = payload.favicon_url;
+
+        // Sinkronisasi data kontak ke kolom sekretariat yang sudah ada
+        if (payload.alamat_kantor) fallbackPayload.alamat_sekretariat = payload.alamat_kantor;
+        if (payload.email_dinas) fallbackPayload.email_sekretariat = payload.email_dinas;
+        if (payload.no_telepon) fallbackPayload.telepon_sekretariat = payload.no_telepon;
+
+        const { data: fallbackData } = await supabase
+          .from("app_settings")
+          .upsert(fallbackPayload, { onConflict: "id" })
+          .select()
+          .single();
+
+        // Simpan seluruh data ke localStorage agar data tidak hilang saat refresh
+        if (typeof window !== "undefined") {
+          const cached = {
+            ...payload,
+            updated_at: new Date().toISOString(),
+          };
+          window.localStorage.setItem("esimpeg_app_settings_local_cache", JSON.stringify(cached));
+          window.dispatchEvent(
+            new CustomEvent("app-settings-updated", {
+              detail: { ...(fallbackData || {}), ...cached },
+            })
+          );
+        }
+
+        const merged = await appSettingsService.get();
+        return { data: merged, error: null, needsMigration: true };
       }
 
-      return { data, error: null };
+      console.error("Gagal memperbarui app_settings:", error);
+      return { data: null, error };
     } catch (err: any) {
       console.error("Terjadi kesalahan saat update app_settings:", err);
       return { data: null, error: err };

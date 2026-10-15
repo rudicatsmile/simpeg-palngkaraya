@@ -13,6 +13,8 @@ import {
   PieChart, Pie, Cell, LineChart, Line, Legend 
 } from "recharts";
 import { usePegawaiList, usePerangkatDaerahList } from "@/services";
+import { useAppSettings } from "@/hooks/useAppSettings";
+
 
 // Data chart untuk eksekutif
 const DATA_GOLONGAN = [
@@ -48,6 +50,7 @@ const DATA_TREN_PENSIUN_5THN = [
 export default function EksekutifDashboardPage() {
   const { data: pegawaiList } = usePegawaiList();
   const { data: pdList } = usePerangkatDaerahList();
+  const { settings } = useAppSettings();
 
   const totalASN = pegawaiList.length || 6;
   const totalPNS = pegawaiList.filter((p) => p.status_kepegawaian === "PNS").length || 5;
@@ -66,9 +69,10 @@ export default function EksekutifDashboardPage() {
           </div>
           <h1 className="text-2xl font-bold tracking-tight">Dashboard Pimpinan Tinggi Daerah</h1>
           <p className="text-slate-300 text-sm mt-1 max-w-2xl">
-            Ringkasan indikator kinerja utama kepegawaian, komposisi talenta ASN, dan kewaspadaan pensiun Pemerintah Kabupaten Nusantara Jaya.
+            Ringkasan indikator kinerja utama kepegawaian, komposisi talenta ASN, dan kewaspadaan pensiun {settings.nama_pemda || settings.nama_sub_aplikasi || "Pemerintah Daerah"}.
           </p>
         </div>
+
         <div className="flex gap-2">
           <Button variant="secondary" size="sm" className="bg-white/10 hover:bg-white/20 text-white border-0 text-xs">
             <Download className="h-4 w-4 mr-1.5" /> Unduh Ringkasan Eksekutif (PDF)
@@ -261,9 +265,10 @@ export default function EksekutifDashboardPage() {
               <div className="text-xs">
                 <p className="font-semibold text-slate-900">Analisis Beban Kerja Formasi Nakes Puskesmas</p>
                 <p className="text-slate-600 mt-0.5">
-                  Dinas Kesehatan mengalami defisit 42 perawat dan bidan di 6 Puskesmas daerah terluar Nusantara Jaya. Usulan formasi PPPK 2027 telah siap diajukan ke MenPAN-RB.
+                  Dinas Kesehatan mengalami defisit 42 perawat dan bidan di 6 Puskesmas daerah terluar {settings.nama_pemda ? settings.nama_pemda.replace(/^Pemerintah\s+/i, "") : "Pemerintah Daerah"}. Usulan formasi PPPK 2027 telah siap diajukan ke MenPAN-RB.
                 </p>
               </div>
+
             </div>
 
             <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-start gap-3">

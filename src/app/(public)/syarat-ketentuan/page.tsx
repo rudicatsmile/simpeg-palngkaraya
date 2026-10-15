@@ -1,12 +1,14 @@
+"use client";
+
 import { FileText, CheckCircle2, AlertTriangle, ShieldCheck } from "lucide-react";
 import { Card } from "@/components/ui/card";
-
-export const metadata = {
-  title: "Syarat & Ketentuan | SIMPEG Daerah Kabupaten Nusantara Jaya",
-  description: "Ketentuan operasional dan kewajiban pengguna Sistem Informasi Manajemen Kepegawaian Daerah.",
-};
+import { useAppSettings } from "@/hooks/useAppSettings";
 
 export default function SyaratKetentuanPage() {
+  const { settings } = useAppSettings();
+  const namaPemda = settings.nama_pemda || settings.nama_sub_aplikasi || "Pemerintah Daerah";
+  const singkatanBkd = settings.singkatan_bkd || `BKPSDM ${namaPemda}`;
+
   return (
     <div className="py-12 sm:py-16">
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 space-y-10">
@@ -20,7 +22,7 @@ export default function SyaratKetentuanPage() {
             Syarat & Ketentuan Layanan SIMPEG Daerah
           </h1>
           <p className="text-sm text-muted-foreground">
-            Berlaku bagi seluruh ASN di lingkungan Pemerintah Kabupaten Nusantara Jaya.
+            Berlaku bagi seluruh ASN di lingkungan {namaPemda}.
           </p>
         </div>
 
@@ -32,7 +34,7 @@ export default function SyaratKetentuanPage() {
             </h3>
             <p>
               Setiap pengguna akun SIMPEG Daerah wajib merupakan Aparatur Sipil Negara (PNS/PPPK)
-              atau tenaga pengelola resmi yang terdaftar di BKPSDM Kabupaten Nusantara Jaya.
+              atau tenaga pengelola resmi yang terdaftar di {singkatanBkd}.
             </p>
             <ul className="list-disc pl-5 space-y-1.5">
               <li>Akun bersifat pribadi, tidak dapat dipindahtangankan atau digunakan secara bersama.</li>
@@ -76,7 +78,7 @@ export default function SyaratKetentuanPage() {
             <p>Pengguna dilarang melakukan tindakan:</p>
             <ul className="list-disc pl-5 space-y-1.5">
               <li>Mencoba mengeksploitasi kerentanan keamanan atau memintas mekanisme otorisasi (RLS).</li>
-              <li>Menggunakan skrip otomatisasi atau *bot scraping* tanpa izin tertulis dari Super Admin BKPSDM.</li>
+              <li>Menggunakan skrip otomatisasi atau *bot scraping* tanpa izin tertulis dari Super Admin {singkatanBkd}.</li>
               <li>Memasukkan data presensi fiktif atau merusak perangkat fingerprint absensi.</li>
             </ul>
           </section>
@@ -86,7 +88,7 @@ export default function SyaratKetentuanPage() {
               5. Perubahan Ketentuan
             </h3>
             <p>
-              BKPSDM Kabupaten Nusantara Jaya berhak memperbarui syarat dan ketentuan ini sewaktu-waktu
+              {singkatanBkd} berhak memperbarui syarat dan ketentuan ini sewaktu-waktu
               mengikuti perkembangan regulasi kepegawaian nasional dan peraturan daerah yang berlaku.
             </p>
           </section>

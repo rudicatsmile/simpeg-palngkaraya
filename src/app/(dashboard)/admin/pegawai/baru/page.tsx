@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { usePerangkatDaerahList, useJabatanList, pegawaiService } from "@/services";
+import { useMasterReferensi } from "@/hooks/useMasterReferensi";
 import { ArrowLeft, UserPlus, Save, CheckCircle2, ShieldCheck, Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,6 +15,10 @@ export default function TambahPegawaiBaruPage() {
   const router = useRouter();
   const { data: pdList, loading: loadingPd } = usePerangkatDaerahList();
   const { data: jabatanList, loading: loadingJabatan } = useJabatanList();
+  const { getOptions: getMasterOptions } = useMasterReferensi();
+
+  const optJenisKelamin = getMasterOptions("jenis_kelamin");
+  const optStatusKepegawaian = getMasterOptions("status_kepegawaian");
 
   const [nip, setNip] = useState("");
   const [nik, setNik] = useState("");
@@ -148,8 +153,11 @@ export default function TambahPegawaiBaruPage() {
                     value={jenisKelamin}
                     onChange={(e) => setJenisKelamin(e.target.value)}
                   >
-                    <option value="L">Laki-laki</option>
-                    <option value="P">Perempuan</option>
+                    {optJenisKelamin.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
@@ -225,8 +233,11 @@ export default function TambahPegawaiBaruPage() {
                     value={statusKepegawaian}
                     onChange={(e) => setStatusKepegawaian(e.target.value)}
                   >
-                    <option value="PNS">PNS (Pegawai Negeri Sipil)</option>
-                    <option value="PPPK">PPPK (Pegawai Pemerintah Perjanjian Kerja)</option>
+                    {optStatusKepegawaian.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div className="space-y-1.5">

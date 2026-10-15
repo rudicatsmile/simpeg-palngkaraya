@@ -1,6 +1,7 @@
 "use client";
 
 import { useTalentPoolList } from "@/services";
+import { useAppSettings } from "@/hooks/useAppSettings";
 import { TrendingUp, Award, Users, CheckCircle2, Plus, Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +10,7 @@ import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@
 
 export default function AdminTalentPoolPage() {
   const { data: talentList, loading } = useTalentPoolList();
+  const { settings } = useAppSettings();
 
   return (
     <div className="space-y-6">
@@ -27,8 +29,9 @@ export default function AdminTalentPoolPage() {
         <CardHeader className="pb-3 border-b border-border/80">
           <CardTitle className="text-base flex items-center gap-2">
             <TrendingUp className="h-4 w-4 text-primary" />
-            Daftar Kader Talenta Terbaik Kabupaten Nusantara Jaya
+            Daftar Kader Talenta Terbaik {settings.nama_pemda || settings.nama_sub_aplikasi || "Pemerintah Daerah"}
           </CardTitle>
+
           <CardDescription className="text-xs">
             Kandidat diurutkan berdasarkan matriks kompetensi dan rekam jejak integritas.
           </CardDescription>

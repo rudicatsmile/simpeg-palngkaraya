@@ -1,12 +1,12 @@
+"use client";
+
 import { Building2, Compass, Shield, Award, Users, CheckCircle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-
-export const metadata = {
-  title: "Tentang Kami | SIMPEG Daerah Kabupaten Nusantara Jaya",
-  description: "Visi, misi, tujuan, dan profil pengelolaan kepegawaian digital ASN Kabupaten Nusantara Jaya.",
-};
+import { useAppSettings } from "@/hooks/useAppSettings";
 
 export default function TentangPage() {
+  const { settings } = useAppSettings();
+
   const values = [
     {
       title: "Transparansi & Akuntabilitas",
@@ -30,6 +30,9 @@ export default function TentangPage() {
     },
   ];
 
+  const namaPemda = settings.nama_pemda || settings.nama_sub_aplikasi || "Pemerintah Daerah";
+  const namaBkd = settings.nama_bkd || "Badan Kepegawaian dan Pengembangan Sumber Daya Manusia (BKPSDM)";
+
   return (
     <div className="py-12 sm:py-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-16">
@@ -37,13 +40,13 @@ export default function TentangPage() {
         <div className="text-center max-w-3xl mx-auto space-y-4">
           <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
             <Building2 className="h-4 w-4" />
-            <span>Badan Kepegawaian & Pengembangan SDM</span>
+            <span>{settings.singkatan_bkd || "Badan Kepegawaian & Pengembangan SDM"}</span>
           </div>
           <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-extrabold text-foreground">
             Mewujudkan Transformasi SDM Aparatur yang Unggul & Berintegritas
           </h1>
           <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-            SIMPEG Daerah adalah langkah strategis Pemerintah Kabupaten Nusantara Jaya dalam
+            SIMPEG Daerah adalah langkah strategis {namaPemda} dalam
             mewujudkan ekosistem manajemen kepegawaian modern berbasis teknologi digital
             yang terpadu, terpercaya, dan berorientasi hasil.
           </p>
@@ -54,10 +57,10 @@ export default function TentangPage() {
           <Card className="border-primary/20 bg-primary/5 p-8 flex flex-col justify-between">
             <div className="space-y-4">
               <span className="text-xs font-bold uppercase tracking-wider text-primary">
-                Visi Kepegawaian 2024-2029
+                Visi Kepegawaian
               </span>
               <h2 className="font-heading text-2xl font-bold text-foreground">
-                "Terwujudnya ASN Kabupaten Nusantara Jaya yang Profesional, Adaptif, dan Berakhlak Menuju Pelayanan Publik Berkelas Dunia."
+                "Terwujudnya ASN {namaPemda} yang Profesional, Adaptif, dan Berakhlak Menuju Pelayanan Publik Berkelas Dunia."
               </h2>
             </div>
             <p className="text-xs text-muted-foreground mt-4 leading-relaxed">
@@ -126,23 +129,22 @@ export default function TentangPage() {
         {/* Profil Instansi Penyelenggara */}
         <div className="rounded-2xl border border-border bg-card p-8 sm:p-10 space-y-6">
           <h2 className="font-heading text-xl sm:text-2xl font-bold text-foreground">
-            Badan Kepegawaian dan Pengembangan Sumber Daya Manusia (BKPSDM)
+            {namaBkd}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-muted-foreground">
             <div>
-              <p className="font-semibold text-foreground mb-1">Kepala BKPSDM</p>
-              <p className="font-bold text-foreground">Ir. Hendra Gunawan, M.T.</p>
-              <p>NIP. 197005181996031002</p>
+              <p className="font-semibold text-foreground mb-1">Kepala Instansi</p>
+              <p className="font-bold text-foreground">Kepala {settings.singkatan_bkd || "BKPSDM"}</p>
+              <p>{namaPemda}</p>
             </div>
             <div>
-              <p className="font-semibold text-foreground mb-1">Alamat Kantor</p>
-              <p>Kompleks Perkantoran Pemerintah Daerah Gedung C Lt. 2</p>
-              <p>Jl. Praja Prajamukti No. 1, Kab. Nusantara Jaya</p>
+              <p className="font-semibold text-foreground mb-1">Alamat Kantor Pelayanan</p>
+              <p>{settings.alamat_kantor || settings.alamat_sekretariat || "Kompleks Perkantoran Pemerintah Daerah"}</p>
             </div>
             <div>
               <p className="font-semibold text-foreground mb-1">Kanal Pelayanan</p>
-              <p>Telepon: (021) 8765-4321</p>
-              <p>Email: layanan.bkpsdm@nusantarajaya.go.id</p>
+              <p>Telepon: {settings.no_telepon || settings.telepon_sekretariat || "(0536) 3221234"}</p>
+              <p>Email: {settings.email_dinas || settings.email_sekretariat || "bkpsdm@palangkaraya.go.id"}</p>
             </div>
           </div>
         </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useDisiplinList } from "@/services";
+import { useMasterReferensi } from "@/hooks/useMasterReferensi";
 import { AlertTriangle, Plus, Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,7 @@ import { toast } from "sonner";
 
 export default function AdminHukumanDisiplinPage() {
   const { data: list, loading: isLoading } = useDisiplinList();
+  const { getLabel, getBadgeColor } = useMasterReferensi();
 
   return (
     <div className="space-y-6">
@@ -79,17 +81,17 @@ export default function AdminHukumanDisiplinPage() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge
-                        variant={
-                          item.jenis === "ringan"
-                            ? "warning"
-                            : item.jenis === "sedang"
-                            ? "ditolak"
-                            : "destructive"
-                        }
+                      <span
+                        className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold border ${
+                          getBadgeColor("jenis_disiplin", item.jenis) === "amber"
+                            ? "bg-amber-50 text-amber-800 border-amber-200"
+                            : getBadgeColor("jenis_disiplin", item.jenis) === "orange"
+                            ? "bg-orange-50 text-orange-800 border-orange-200"
+                            : "bg-rose-50 text-rose-800 border-rose-200"
+                        }`}
                       >
-                        {item.jenis.toUpperCase()}
-                      </Badge>
+                        {getLabel("jenis_disiplin", item.jenis, item.jenis)}
+                      </span>
                     </TableCell>
                     <TableCell className="text-xs text-foreground max-w-xs truncate">
                       {item.pasal}
@@ -106,9 +108,15 @@ export default function AdminHukumanDisiplinPage() {
                       )}
                     </TableCell>
                     <TableCell className="text-right">
-                      <Badge variant={item.status === "aktif" ? "ditolak" : "draf"}>
-                        {item.status === "aktif" ? "MASIH BERLAKU" : "BERAKHIR"}
-                      </Badge>
+                      <span
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${
+                          item.status === "aktif"
+                            ? "bg-rose-50 text-rose-700 border-rose-200"
+                            : "bg-emerald-50 text-emerald-700 border-emerald-200"
+                        }`}
+                      >
+                        {getLabel("status_hukuman", item.status, item.status === "aktif" ? "Masih Berlaku" : "Berakhir")}
+                      </span>
                     </TableCell>
                   </TableRow>
                 ))

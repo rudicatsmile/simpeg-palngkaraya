@@ -50,8 +50,8 @@ const DUMMY_AUDIT_TRAILS: AuditTrailEntry[] = [
       },
       {
         field: "alamat",
-        sebelum: "Jl. Merdeka No. 45, Nusantara Jaya",
-        sesudah: "Jl. Veteran No. 88, Nusantara Jaya"
+        sebelum: "Jl. Merdeka No. 45, Palangkaraya",
+        sesudah: "Jl. Veteran No. 88, Palangkaraya"
       }
     ],
     catatan: "Pembaruan kontak dan domisili atas permohonan mandiri ASN"

@@ -3,7 +3,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRole } from "@/context/RoleContext";
+import { useAppSettings } from "@/hooks/useAppSettings";
 import { cn } from "@/lib/utils";
+
 import {
   Building2,
   LayoutDashboard,
@@ -32,6 +34,7 @@ import {
   Send,
   Download,
   Fingerprint,
+  Database,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -121,6 +124,7 @@ export function DashboardSidebar({ onItemClick }: SidebarProps) {
           {
             title: "Sistem & Konfigurasi",
             items: [
+              { href: "/admin/master-data", label: "Master Data & Referensi", icon: Database },
               { href: "/admin/notifikasi", label: "Pusat Notifikasi", icon: Bell },
               { href: "/admin/laporan", label: "Laporan & Statistik", icon: Download },
               { href: "/admin/aturan-bisnis", label: "Aturan Bisnis", icon: Sliders },
@@ -193,6 +197,7 @@ export function DashboardSidebar({ onItemClick }: SidebarProps) {
   };
 
   const sections = getNavSections();
+  const { settings } = useAppSettings();
 
   return (
     <aside className="flex h-full w-[260px] flex-col border-r border-border bg-card text-card-foreground select-none">
@@ -203,19 +208,30 @@ export function DashboardSidebar({ onItemClick }: SidebarProps) {
           onClick={onItemClick}
           className="flex items-center gap-3 group"
         >
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-md shadow-primary/20 group-hover:scale-105 transition-transform">
-            <Building2 className="h-5 w-5" />
-          </div>
+          {settings.logo_url ? (
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-card border border-border/60 p-1 shadow-sm group-hover:scale-105 transition-transform">
+              <img
+                src={settings.logo_url}
+                alt={settings.nama_aplikasi || "Logo"}
+                className="h-full w-full object-contain"
+              />
+            </div>
+          ) : (
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-md shadow-primary/20 group-hover:scale-105 transition-transform">
+              <Building2 className="h-5 w-5" />
+            </div>
+          )}
           <div className="flex flex-col">
             <span className="font-heading text-sm font-bold tracking-tight text-foreground flex items-center gap-1">
-              SIMPEG Daerah
+              {settings.nama_aplikasi || "SIMPEG Daerah"}
             </span>
             <span className="text-[10px] font-medium text-muted-foreground truncate max-w-[150px]">
-              Kab. Nusantara Jaya
+              {settings.nama_pemda || settings.nama_sub_aplikasi || "Pemerintah Daerah"}
             </span>
           </div>
         </Link>
       </div>
+
 
       {/* Nav List with Scroll */}
       <div className="flex-1 overflow-y-auto px-3 py-4 space-y-6">

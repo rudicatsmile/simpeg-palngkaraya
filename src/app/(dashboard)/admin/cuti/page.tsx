@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useCutiList } from "@/services";
+import { useMasterReferensi } from "@/hooks/useMasterReferensi";
 import { Calendar, Sliders, CheckCircle2, Clock, Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,6 +13,7 @@ import { toast } from "sonner";
 export default function AdminManajemenCutiPage() {
   const [jatahTahunan, setJatahTahunan] = useState(12);
   const { data: listCuti, loading } = useCutiList();
+  const { getLabel, getBadgeColor } = useMasterReferensi();
 
   return (
     <div className="space-y-6">
@@ -86,8 +88,8 @@ export default function AdminManajemenCutiPage() {
                   <TableCell className="text-xs text-muted-foreground">
                     {item.pd_nama}
                   </TableCell>
-                  <TableCell className="font-semibold text-xs capitalize">
-                    Cuti {item.jenis}
+                  <TableCell className="font-semibold text-xs">
+                    {getLabel("jenis_cuti", item.jenis, `Cuti ${item.jenis}`)}
                   </TableCell>
                   <TableCell className="text-xs">
                     <span className="font-bold tabular-nums">{item.jumlah_hari} Hari Kerja</span>
@@ -99,17 +101,21 @@ export default function AdminManajemenCutiPage() {
                     {item.alasan}
                   </TableCell>
                   <TableCell className="text-right">
-                    <Badge
-                      variant={
-                        item.status === "disetujui_kepala_pd"
-                          ? "disetujui"
-                          : item.status === "ditolak"
-                          ? "ditolak"
-                          : "menunggu"
-                      }
+                    <span
+                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${
+                        getBadgeColor("status_cuti", item.status) === "emerald"
+                          ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                          : getBadgeColor("status_cuti", item.status) === "rose"
+                          ? "bg-rose-50 text-rose-700 border-rose-200"
+                          : getBadgeColor("status_cuti", item.status) === "blue"
+                          ? "bg-blue-50 text-blue-700 border-blue-200"
+                          : getBadgeColor("status_cuti", item.status) === "cyan"
+                          ? "bg-cyan-50 text-cyan-700 border-cyan-200"
+                          : "bg-slate-50 text-slate-700 border-slate-200"
+                      }`}
                     >
-                      {item.status.replace(/_/g, " ").toUpperCase()}
-                    </Badge>
+                      {getLabel("status_cuti", item.status)}
+                    </span>
                   </TableCell>
                 </TableRow>
               ))

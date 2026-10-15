@@ -8,7 +8,9 @@ import {
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useAppSettings } from "@/hooks/useAppSettings";
 import { toast } from "sonner";
+
 
 interface LaporanEksekutif {
   id: string;
@@ -61,10 +63,12 @@ const DAFTAR_LAPORAN: LaporanEksekutif[] = [
 
 export default function EksekutifLaporanPage() {
   const [activeReport, setActiveReport] = useState<LaporanEksekutif>(DAFTAR_LAPORAN[0]);
+  const { settings } = useAppSettings();
 
   const handleDownload = (judul: string) => {
     toast.success(`Mengunduh dokumen: ${judul}`);
   };
+
 
   return (
     <div className="space-y-6">
@@ -130,8 +134,9 @@ export default function EksekutifLaporanPage() {
                     {activeReport.judul}
                   </CardTitle>
                   <CardDescription className="text-xs text-slate-500 mt-1">
-                    Dipublikasikan oleh BKPSDM Kab. Nusantara Jaya • Rilis: {activeReport.tanggalRilis}
+                    Dipublikasikan oleh {settings.singkatan_bkd || `BKPSDM ${settings.nama_pemda || "Pemerintah Daerah"}`} • Rilis: {activeReport.tanggalRilis}
                   </CardDescription>
+
                 </div>
                 <div className="flex gap-2">
                   <Button 
@@ -193,8 +198,9 @@ export default function EksekutifLaporanPage() {
                 <div>
                   <p className="text-xs font-semibold text-slate-800">Otorisasi & Keabsahan Digital</p>
                   <p className="text-[11px] text-slate-500 mt-0.5">
-                    Ditandatangani secara elektronik (BSrE BSSN) oleh Kepala BKPSDM Kab. Nusantara Jaya.
+                    Ditandatangani secara elektronik (BSrE BSSN) oleh Kepala {settings.singkatan_bkd || `BKPSDM ${settings.nama_pemda || "Pemerintah Daerah"}`}.
                   </p>
+
                 </div>
                 <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200">
                   <CheckCircle2 className="h-3.5 w-3.5 mr-1" /> Terverifikasi Sah

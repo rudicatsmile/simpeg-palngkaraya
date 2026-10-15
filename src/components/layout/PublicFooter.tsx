@@ -33,9 +33,10 @@ export function PublicFooter() {
               </span>
             </div>
             <p className="text-xs leading-relaxed">
-              Platform Manajemen Kepegawaian ASN Terpadu {settings.nama_sub_aplikasi}.
+              Platform Manajemen Kepegawaian ASN Terpadu {settings.nama_pemda || settings.nama_sub_aplikasi || "Pemerintah Daerah"}.
               Mendukung tata kelola SDM aparatur yang transparan, profesional, dan akuntabel.
             </p>
+
 
             <div className="flex items-center gap-2 text-xs text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 p-2 rounded-lg border border-emerald-200 dark:border-emerald-900">
               <Shield className="h-4 w-4 shrink-0" />
@@ -120,25 +121,27 @@ export function PublicFooter() {
               <p className="flex items-start gap-2">
                 <MapPin className="h-4 w-4 shrink-0 text-primary mt-0.5" />
                 <span>
-                  {settings.alamat_sekretariat ||
-                    "Jl. Praja Prajamukti No. 1, Kompleks Perkantoran Pemkab Nusantara Jaya"}
+                  {settings.alamat_kantor ||
+                    settings.alamat_sekretariat ||
+                    "Kompleks Perkantoran Pemerintah Daerah"}
                 </span>
               </p>
               <p className="flex items-center gap-2">
                 <Phone className="h-4 w-4 shrink-0 text-primary" />
                 <span>
-                  {settings.telepon_sekretariat || "(021) 8765-4321 / 0812-3456-7890"}
+                  {settings.no_telepon || settings.telepon_sekretariat || "(0536) 3221234"}
                 </span>
               </p>
               <p className="flex items-center gap-2">
                 <Mail className="h-4 w-4 shrink-0 text-primary" />
                 <span>
-                  {settings.email_sekretariat || "bkpsdm@nusantarajaya.go.id"}
+                  {settings.email_dinas || settings.email_sekretariat || "bkpsdm@palangkaraya.go.id"}
                 </span>
               </p>
               <p className="text-[11px] text-muted-foreground pt-1">
                 {settings.jam_operasional_sekretariat || "Senin - Jumat: 07.30 - 16.00 WIB"}
               </p>
+
             </div>
           </div>
         </div>

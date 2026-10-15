@@ -1,24 +1,51 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { pegawaiService } from "@/services";
-import { ArrowLeft, User, Calendar, Award, Clock, Target, FileText } from "lucide-react";
+import { Pegawai } from "@/types";
+import { ArrowLeft, User, Calendar, Award, Clock, Target, FileText, Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
-export const metadata = {
-  title: "Profil Bawahan Ringkas | SIMPEG Daerah",
-};
+export default function ProfilBawahanRingkasPage() {
+  const params = useParams();
+  const id = params?.id as string;
 
-export default async function ProfilBawahanRingkasPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
-  let pegawai = await pegawaiService.getById(id);
-  if (!pegawai) {
-    const all = await pegawaiService.getAll();
-    pegawai = all[0];
+  const [pegawai, setPegawai] = useState<Pegawai | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        setLoading(true);
+        let p = await pegawaiService.getById(id);
+        if (!p) {
+          const all = await pegawaiService.getAll();
+          p = all[0] || null;
+        }
+        setPegawai(p);
+      } catch (err) {
+        console.error("Gagal memuat bawahan:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    if (id) {
+      loadData();
+    }
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-24 text-muted-foreground text-xs gap-3">
+        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+        <p>Memuat data profil bawahan...</p>
+      </div>
+    );
   }
 
   if (!pegawai) {

@@ -25,8 +25,9 @@ export async function GET() {
     {
       status: "ok",
       version: "1.0.0",
-      app: "e-SIMPEG Daerah Kabupaten Nusantara Jaya",
+      app: "e-SIMPEG Daerah",
       timestamp: new Date().toISOString(),
+
       uptime: Math.floor(process.uptime()),
       database: {
         status: dbStatus,

@@ -4,7 +4,13 @@ export interface EmailSendParams {
   htmlContent: string;
 }
 
-export function generateEmailTemplate(judul: string, pesan: string, ctaLink?: string): string {
+export function generateEmailTemplate(
+  judul: string,
+  pesan: string,
+  ctaLink?: string,
+  namaPemda: string = "Pemerintah Daerah",
+  namaBkd: string = "Badan Kepegawaian dan Pengembangan Sumber Daya Manusia (BKPSDM)"
+): string {
   return `
 <!DOCTYPE html>
 <html lang="id">
@@ -27,8 +33,8 @@ export function generateEmailTemplate(judul: string, pesan: string, ctaLink?: st
 <body>
   <div class="card">
     <div class="header">
-      <h2>PEMERINTAH KABUPATEN NUSANTARA JAYA</h2>
-      <p>Badan Kepegawaian dan Pengembangan Sumber Daya Manusia (BKPSDM)</p>
+      <h2>${namaPemda.toUpperCase()}</h2>
+      <p>${namaBkd}</p>
     </div>
     <div class="body">
       <h3>${judul}</h3>
@@ -41,13 +47,14 @@ export function generateEmailTemplate(judul: string, pesan: string, ctaLink?: st
       <p style="font-size: 12px; color: #94a3b8; margin-top: 24px;">Pesan ini dikirim otomatis oleh sistem kepegawaian e-SIMPEG Daerah. Mohon tidak membalas email ini.</p>
     </div>
     <div class="footer">
-      &copy; 2026 BKPSDM Kabupaten Nusantara Jaya. Seluruh hak cipta dilindungi.
+      &copy; ${new Date().getFullYear()} ${namaPemda}. Seluruh hak cipta dilindungi.
     </div>
   </div>
 </body>
 </html>
   `;
 }
+
 
 export async function sendEmailMessage(params: EmailSendParams): Promise<{ success: boolean; error?: string }> {
   // Simulasi/Implementasi pengiriman SMTP kedinasan

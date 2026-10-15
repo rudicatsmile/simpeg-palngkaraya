@@ -12,6 +12,7 @@ import {
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Legend 
 } from "recharts";
 import { useFormasiList } from "@/services";
+import { useAppSettings } from "@/hooks/useAppSettings";
 
 const DATA_ANALISIS_BEBAN = [
   { nama: "Guru & Tenaga Kependidikan", kebutuhan: 2600, eksisting: 2150, gap: -450 },
@@ -23,6 +24,8 @@ const DATA_ANALISIS_BEBAN = [
 
 export default function EksekutifFormasiPage() {
   const { data: formasiList, loading } = useFormasiList();
+  const { settings } = useAppSettings();
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -30,9 +33,10 @@ export default function EksekutifFormasiPage() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">Analisis Kebutuhan Formasi & Belanja Pegawai</h1>
           <p className="text-slate-500 text-sm mt-1">
-            Kalkulasi makro Anjab-ABK, pemenuhan tenaga pelayanan dasar, dan batas proporsi belanja pegawai APBD Kabupaten Nusantara Jaya.
+            Kalkulasi makro Anjab-ABK, pemenuhan tenaga pelayanan dasar, dan batas proporsi belanja pegawai APBD {settings.nama_pemda || settings.nama_sub_aplikasi || "Pemerintah Daerah"}.
           </p>
         </div>
+
         <div className="flex gap-2">
           <Button variant="outline" size="sm" className="text-xs">
             <Download className="h-4 w-4 mr-1.5" /> Unduh Dokumen e-Formasi (PDF)

@@ -36,6 +36,20 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  async redirects() {
+    return [
+      {
+        source: "/auditor/dashboard",
+        destination: "/audit/dashboard",
+        permanent: true,
+      },
+      {
+        source: "/auditor/:path*",
+        destination: "/audit/:path*",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

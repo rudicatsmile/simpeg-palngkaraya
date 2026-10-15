@@ -42,23 +42,23 @@ export default function PengaturanUmumAdminPage() {
 
   // State Konfigurasi Instansi Umum
   const [instansi, setInstansi] = useState({
-    namaPemda: "Pemerintah Kabupaten Nusantara Jaya",
-    namaBkd: "Badan Kepegawaian dan Pengembangan Sumber Daya Manusia (BKPSDM)",
-    singkatanBkd: "BKPSDM Kab. Nusantara Jaya",
-    alamat: "Jl. Praja Mukti No. 01, Kompleks Perkantoran Terpadu, Nusantara Jaya 65123",
-    emailDinas: "bkpsdm@nusantarajaya.go.id",
-    noTelepon: "(0341) 889922",
-    whatsappHelpdesk: "0812-3456-7890",
-    situsWeb: "https://bkpsdm.nusantarajaya.go.id",
-    zonaWaktu: "WIB (Asia/Jakarta, UTC+7)",
-    formatTanggal: "DD/MM/YYYY",
-    tahunAnggaran: "2026",
+    namaPemda: DEFAULT_APP_SETTINGS.nama_pemda || "Pemerintah Kota Palangkaraya",
+    namaBkd: DEFAULT_APP_SETTINGS.nama_bkd || "Badan Kepegawaian dan Pengembangan Sumber Daya Manusia (BKPSDM)",
+    singkatanBkd: DEFAULT_APP_SETTINGS.singkatan_bkd || "BKPSDM Kota Palangkaraya",
+    alamat: DEFAULT_APP_SETTINGS.alamat_kantor || "Jl. Tjilik Riwut No. 98, Palangka Raya 73112",
+    emailDinas: DEFAULT_APP_SETTINGS.email_dinas || "bkpsdm@palangkaraya.go.id",
+    noTelepon: DEFAULT_APP_SETTINGS.no_telepon || "(0536) 3221234",
+    whatsappHelpdesk: DEFAULT_APP_SETTINGS.whatsapp_helpdesk || "0812-3456-7890",
+    situsWeb: DEFAULT_APP_SETTINGS.situs_web || "https://bkpsdm.palangkaraya.go.id",
+    zonaWaktu: DEFAULT_APP_SETTINGS.zona_waktu || "WIB (Asia/Jakarta, UTC+7)",
+    formatTanggal: DEFAULT_APP_SETTINGS.format_tanggal || "DD/MM/YYYY",
+    tahunAnggaran: DEFAULT_APP_SETTINGS.tahun_anggaran || "2026",
     kuotaCutiTahunanDefault: "12",
-    toleransiKeterlambatanMenit: "15",
+    toleransiKeterlambatanMenit: DEFAULT_APP_SETTINGS.toleransi_keterlambatan_menit || "15",
     batasUsiaPensiunUmum: "58",
     batasUsiaPensiunStruktural: "60",
-    autoLockSessionMenit: "30",
-    enforceMfaAdmin: true,
+    autoLockSessionMenit: DEFAULT_APP_SETTINGS.auto_lock_session_menit || "30",
+    enforceMfaAdmin: DEFAULT_APP_SETTINGS.enforce_mfa_admin !== undefined ? DEFAULT_APP_SETTINGS.enforce_mfa_admin : true,
   });
 
   const [savingInstansi, setSavingInstansi] = useState(false);
@@ -69,9 +69,29 @@ export default function PengaturanUmumAdminPage() {
       try {
         setLoadingBranding(true);
         const data = await appSettingsService.get();
-        setBranding(data);
+        if (data) {
+          setBranding(data);
+          setInstansi((prev) => ({
+            ...prev,
+            namaPemda: data.nama_pemda || prev.namaPemda,
+            namaBkd: data.nama_bkd || prev.namaBkd,
+            singkatanBkd: data.singkatan_bkd || prev.singkatanBkd,
+            alamat: data.alamat_kantor || data.alamat_sekretariat || prev.alamat,
+            emailDinas: data.email_dinas || data.email_sekretariat || prev.emailDinas,
+            noTelepon: data.no_telepon || data.telepon_sekretariat || prev.noTelepon,
+            whatsappHelpdesk: data.whatsapp_helpdesk || prev.whatsappHelpdesk,
+            situsWeb: data.situs_web || prev.situsWeb,
+            zonaWaktu: data.zona_waktu || prev.zonaWaktu,
+            formatTanggal: data.format_tanggal || prev.formatTanggal,
+            tahunAnggaran: data.tahun_anggaran || prev.tahunAnggaran,
+            toleransiKeterlambatanMenit: data.toleransi_keterlambatan_menit || prev.toleransiKeterlambatanMenit,
+            autoLockSessionMenit: data.auto_lock_session_menit || prev.autoLockSessionMenit,
+            enforceMfaAdmin: data.enforce_mfa_admin !== undefined ? data.enforce_mfa_admin : prev.enforceMfaAdmin,
+            ...(data.instansi_config || {}),
+          }));
+        }
       } catch (err) {
-        console.error("Gagal memuat pengaturan branding:", err);
+        console.error("Gagal memuat pengaturan branding & instansi:", err);
       } finally {
         setLoadingBranding(false);
       }
@@ -177,14 +197,69 @@ export default function PengaturanUmumAdminPage() {
     }
   };
 
-  // Simpan parameter instansi umum
-  const handleSaveInstansi = (e: React.FormEvent) => {
-    e.preventDefault();
-    setSavingInstansi(true);
-    setTimeout(() => {
+  // Simpan parameter instansi umum ke Supabase
+  const handleSaveInstansi = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!instansi.namaPemda.trim()) {
+      toast.error("Nama Pemerintah Daerah wajib diisi!");
+      return;
+    }
+
+    try {
+      setSavingInstansi(true);
+      const { data, error, needsMigration } = await appSettingsService.update({
+        nama_pemda: instansi.namaPemda,
+        nama_bkd: instansi.namaBkd,
+        singkatan_bkd: instansi.singkatanBkd,
+        alamat_kantor: instansi.alamat,
+        email_dinas: instansi.emailDinas,
+        no_telepon: instansi.noTelepon,
+        whatsapp_helpdesk: instansi.whatsappHelpdesk,
+        situs_web: instansi.situsWeb,
+        zona_waktu: instansi.zonaWaktu,
+        format_tanggal: instansi.formatTanggal,
+        tahun_anggaran: instansi.tahunAnggaran,
+        toleransi_keterlambatan_menit: instansi.toleransiKeterlambatanMenit,
+        auto_lock_session_menit: instansi.autoLockSessionMenit,
+        enforce_mfa_admin: instansi.enforceMfaAdmin,
+        instansi_config: instansi,
+      });
+
+      if (error) {
+        toast.error("Gagal menyimpan ke database: " + (error.message || "Periksa koneksi Supabase"));
+      } else {
+        if (data) {
+          setBranding(data);
+          setInstansi((prev) => ({
+            ...prev,
+            namaPemda: data.nama_pemda || prev.namaPemda,
+            namaBkd: data.nama_bkd || prev.namaBkd,
+            singkatanBkd: data.singkatan_bkd || prev.singkatanBkd,
+            alamat: data.alamat_kantor || data.alamat_sekretariat || prev.alamat,
+            emailDinas: data.email_dinas || data.email_sekretariat || prev.emailDinas,
+            noTelepon: data.no_telepon || data.telepon_sekretariat || prev.noTelepon,
+            whatsappHelpdesk: data.whatsapp_helpdesk || prev.whatsappHelpdesk,
+            situsWeb: data.situs_web || prev.situsWeb,
+            zonaWaktu: data.zona_waktu || prev.zonaWaktu,
+            formatTanggal: data.format_tanggal || prev.formatTanggal,
+            tahunAnggaran: data.tahun_anggaran || prev.tahunAnggaran,
+            toleransiKeterlambatanMenit: data.toleransi_keterlambatan_menit || prev.toleransiKeterlambatanMenit,
+            autoLockSessionMenit: data.auto_lock_session_menit || prev.autoLockSessionMenit,
+            enforceMfaAdmin: data.enforce_mfa_admin !== undefined ? data.enforce_mfa_admin : prev.enforceMfaAdmin,
+          }));
+        }
+
+        if (needsMigration) {
+          toast.success("Profil tersimpan! (Jalankan file SQL migrasi di Supabase SQL Editor untuk kolom permanen)");
+        } else {
+          toast.success("Profil Pemda & BKPSDM berhasil disimpan ke database Supabase!");
+        }
+      }
+    } catch (err: any) {
+      toast.error("Terjadi kesalahan: " + err.message);
+    } finally {
       setSavingInstansi(false);
-      toast.success("Pengaturan instansi dan parameter operasional berhasil diperbarui!");
-    }, 500);
+    }
   };
 
   return (
@@ -267,7 +342,7 @@ export default function PengaturanUmumAdminPage() {
                         2. Nama Sub Aplikasi / Wilayah <span className="text-rose-500">*</span>
                       </label>
                       <Input
-                        placeholder="Contoh: Kabupaten Nusantara Jaya"
+                        placeholder="Contoh: Kota Palangkaraya"
                         value={branding.nama_sub_aplikasi}
                         onChange={(e) => setBranding({ ...branding, nama_sub_aplikasi: e.target.value })}
                         disabled={loadingBranding}
@@ -318,7 +393,7 @@ export default function PengaturanUmumAdminPage() {
                       5. Nama Hak Cipta (Copyright Footer)
                     </label>
                     <Input
-                      placeholder="Contoh: © 2026 Pemerintah Kabupaten Nusantara Jaya. Hak Cipta Dilindungi Undang-Undang."
+                      placeholder="Contoh: © 2026 Pemerintah Kota Palangkaraya. Hak Cipta Dilindungi Undang-Undang."
                       value={branding.nama_hak_cipta || ""}
                       onChange={(e) => setBranding({ ...branding, nama_hak_cipta: e.target.value })}
                       disabled={loadingBranding}
@@ -356,7 +431,7 @@ export default function PengaturanUmumAdminPage() {
                           Nomor Telepon / Kontak
                         </label>
                         <Input
-                          placeholder="Contoh: (021) 8765-4321 / 0812-3456-7890"
+                          placeholder="Contoh: (0536) 3221234 / 0812-3456-7890"
                           value={branding.telepon_sekretariat || ""}
                           onChange={(e) => setBranding({ ...branding, telepon_sekretariat: e.target.value })}
                           disabled={loadingBranding}
@@ -369,12 +444,13 @@ export default function PengaturanUmumAdminPage() {
                         Alamat Lengkap Sekretariat
                       </label>
                       <Input
-                        placeholder="Contoh: Jl. Praja Prajamukti No. 1, Kompleks Perkantoran Pemkab Nusantara Jaya"
+                        placeholder="Contoh: Jl. Tjilik Riwut No. 98, Palangka Raya 73112"
                         value={branding.alamat_sekretariat || ""}
                         onChange={(e) => setBranding({ ...branding, alamat_sekretariat: e.target.value })}
                         disabled={loadingBranding}
                       />
                     </div>
+
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
@@ -627,7 +703,7 @@ export default function PengaturanUmumAdminPage() {
                           {branding.nama_aplikasi || "SIMPEG Daerah"}
                         </h3>
                         <p className="text-xs font-bold text-indigo-600 leading-tight">
-                          {branding.nama_sub_aplikasi || "Kabupaten Nusantara Jaya"}
+                          {branding.nama_sub_aplikasi || branding.nama_pemda || "Pemerintah Daerah"}
                         </p>
                       </div>
 
@@ -653,7 +729,7 @@ export default function PengaturanUmumAdminPage() {
                           <MapPin className="h-3 w-3 text-indigo-600 shrink-0 mt-0.5" />
                           <span className="leading-tight">
                             {branding.alamat_sekretariat ||
-                              "Jl. Praja Prajamukti No. 1, Kompleks Perkantoran Pemkab Nusantara Jaya"}
+                              "Kompleks Perkantoran Pemerintah Daerah"}
                           </span>
                         </p>
                         <p className="flex items-center gap-1.5 text-slate-500">
@@ -662,7 +738,7 @@ export default function PengaturanUmumAdminPage() {
                         </p>
                         <p className="flex items-center gap-1.5 text-slate-500">
                           <Mail className="h-3 w-3 text-indigo-600 shrink-0" />
-                          <span>{branding.email_sekretariat || "bkpsdm@nusantarajaya.go.id"}</span>
+                          <span>{branding.email_sekretariat || "bkpsdm@daerah.go.id"}</span>
                         </p>
                         <p className="text-[9px] text-slate-400 pt-0.5">
                           {branding.jam_operasional_sekretariat || "Senin - Jumat: 07.30 - 16.00 WIB"}
@@ -806,6 +882,15 @@ export default function PengaturanUmumAdminPage() {
                   </div>
                 </div>
 
+                <div>
+                  <label className="text-xs font-semibold text-slate-700 block mb-1">Website / Portal Resmi</label>
+                  <Input
+                    value={instansi.situsWeb}
+                    onChange={(e) => setInstansi({ ...instansi, situsWeb: e.target.value })}
+                    placeholder="https://bkpsdm.palangkaraya.go.id"
+                  />
+                </div>
+
                 <div className="pt-2 flex justify-end">
                   <Button
                     type="button"
@@ -814,7 +899,7 @@ export default function PengaturanUmumAdminPage() {
                     className="bg-indigo-600 hover:bg-indigo-700"
                   >
                     <Save className="h-4 w-4 mr-2" />
-                    {savingInstansi ? "Menyimpan..." : "Simpan Profil Instansi"}
+                    {savingInstansi ? "Menyimpan ke Database..." : "Simpan Profil Instansi"}
                   </Button>
                 </div>
               </CardContent>
@@ -873,6 +958,18 @@ export default function PengaturanUmumAdminPage() {
                   </p>
                 </div>
               </div>
+
+              <div className="pt-2 flex justify-end">
+                <Button
+                  type="button"
+                  onClick={handleSaveInstansi}
+                  disabled={savingInstansi}
+                  className="bg-indigo-600 hover:bg-indigo-700"
+                >
+                  <Save className="h-4 w-4 mr-2" />
+                  {savingInstansi ? "Menyimpan ke Database..." : "Simpan Standar Waktu & Kerja"}
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -925,6 +1022,18 @@ export default function PengaturanUmumAdminPage() {
                     Nomor Induk Kependudukan (NIK) dan data keluarga disimpan menggunakan enkripsi PostgreSQL pgcrypto AES-256 dan dilindungi Row Level Security.
                   </p>
                 </div>
+              </div>
+
+              <div className="pt-2 flex justify-end">
+                <Button
+                  type="button"
+                  onClick={handleSaveInstansi}
+                  disabled={savingInstansi}
+                  className="bg-indigo-600 hover:bg-indigo-700"
+                >
+                  <Save className="h-4 w-4 mr-2" />
+                  {savingInstansi ? "Menyimpan ke Database..." : "Simpan Kebijakan Keamanan"}
+                </Button>
               </div>
             </CardContent>
           </Card>

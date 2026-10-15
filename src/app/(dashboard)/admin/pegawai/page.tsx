@@ -3,6 +3,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePegawaiList, usePerangkatDaerahList } from "@/services";
+import { useAppSettings } from "@/hooks/useAppSettings";
+import { useMasterReferensi } from "@/hooks/useMasterReferensi";
+
 import { Users, Plus, Upload, Search, Filter, Eye, Edit3, ArrowRight, Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,6 +20,10 @@ export default function DataIndukPegawaiPage() {
 
   const { data: pegawaiList, loading: isLoading } = usePegawaiList();
   const { data: pdList } = usePerangkatDaerahList();
+  const { settings } = useAppSettings();
+  const { getOptions: getMasterOptions, getLabel: getMasterLabel } = useMasterReferensi();
+
+  const optStatusKepegawaian = getMasterOptions("status_kepegawaian");
 
   const filtered = pegawaiList.filter((p) => {
     const matchSearch =
@@ -36,9 +43,10 @@ export default function DataIndukPegawaiPage() {
             Data Induk Pegawai ASN
           </h1>
           <p className="text-xs text-muted-foreground">
-            Pangkalan data utama PNS dan PPPK Pemerintah Kabupaten Nusantara Jaya.
+            Pangkalan data utama PNS dan PPPK {settings.nama_pemda || settings.nama_sub_aplikasi || "Pemerintah Daerah"}.
           </p>
         </div>
+
         <div className="flex gap-2">
           <Link href="/admin/pegawai/impor">
             <Button variant="outline" size="sm" className="gap-1.5 text-xs font-semibold">
@@ -89,9 +97,12 @@ export default function DataIndukPegawaiPage() {
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
             >
-              <option value="all">Semua Status (PNS & PPPK)</option>
-              <option value="PNS">PNS (Pegawai Negeri Sipil)</option>
-              <option value="PPPK">PPPK (Pegawai Pemerintah dg Perjanjian Kerja)</option>
+              <option value="all">Semua Status Kepegawaian</option>
+              {optStatusKepegawaian.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
             </select>
           </div>
         </div>

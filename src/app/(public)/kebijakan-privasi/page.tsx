@@ -1,12 +1,14 @@
+"use client";
+
 import { ShieldCheck, Lock, EyeOff, FileText, CheckCircle2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
-
-export const metadata = {
-  title: "Kebijakan Privasi | SIMPEG Daerah Kabupaten Nusantara Jaya",
-  description: "Komitmen kepatuhan perlindungan data pribadi ASN sesuai Undang-Undang Nomor 27 Tahun 2022.",
-};
+import { useAppSettings } from "@/hooks/useAppSettings";
 
 export default function KebijakanPrivasiPage() {
+  const { settings } = useAppSettings();
+  const namaPemda = settings.nama_pemda || settings.nama_sub_aplikasi || "Pemerintah Daerah";
+  const namaBkd = settings.nama_bkd || "Badan Kepegawaian dan Pengembangan Sumber Daya Manusia (BKPSDM)";
+
   return (
     <div className="py-12 sm:py-16">
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 space-y-10">
@@ -31,12 +33,12 @@ export default function KebijakanPrivasiPage() {
             Prinsip Pemrosesan Data Pribadi
           </h2>
           <p className="text-xs text-muted-foreground leading-relaxed">
-            Pemerintah Kabupaten Nusantara Jaya melalui Badan Kepegawaian dan Pengembangan Sumber
-            Daya Manusia (BKPSDM) berkomitmen melindungi seluruh data pribadi Aparatur Sipil Negara
+            {namaPemda} melalui {namaBkd} berkomitmen melindungi seluruh data pribadi Aparatur Sipil Negara
             (PNS dan PPPK). Pemrosesan data dilakukan berdasarkan prinsip tujuan yang jelas,
             minimisasi data, pembatasan akses, dan akuntabilitas keamanan sistem.
           </p>
         </Card>
+
 
         {/* Konten Regulasi */}
         <div className="space-y-8 text-xs sm:text-sm text-muted-foreground leading-relaxed">
@@ -100,7 +102,7 @@ export default function KebijakanPrivasiPage() {
             </h3>
             <p>
               Untuk pertanyaan, permohonan hak pemilik data, atau pengaduan insiden keamanan data,
-              Anda dapat menghubungi Unit Kepatuhan Data BKPSDM melalui email: <code>dpo.simpeg@nusantarajaya.go.id</code>.
+              Anda dapat menghubungi Unit Kepatuhan Data BKPSDM melalui email: <code>{settings.email_sekretariat || "bkpsdm@palangkaraya.go.id"}</code>.
             </p>
           </section>
         </div>

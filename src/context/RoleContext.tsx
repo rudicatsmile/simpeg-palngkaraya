@@ -71,7 +71,7 @@ export function RoleProvider({ children }: { children: React.ReactNode }) {
         : currentRole === "atasan" || currentRole === "kepala_pd"
         ? "Kepala Dinas Pendidikan & Kebudayaan"
         : currentRole === "super_admin"
-        ? "Kepala BKPSDM Kabupaten Nusantara Jaya"
+        ? "Kepala BKPSDM"
         : currentRole === "operator"
         ? "Staf Pengelola Sistem Kepegawaian"
         : currentRole === "pimpinan"
@@ -81,11 +81,12 @@ export function RoleProvider({ children }: { children: React.ReactNode }) {
       currentRole === "pegawai" || currentRole === "atasan" || currentRole === "kepala_pd"
         ? "Dinas Pendidikan dan Kebudayaan"
         : currentRole === "super_admin" || currentRole === "operator"
-        ? "BKPSDM Kabupaten Nusantara Jaya"
+        ? "Badan Kepegawaian dan Pengembangan SDM (BKPSDM)"
         : currentRole === "pimpinan"
         ? "Sekretariat Daerah"
         : "Inspektorat Daerah",
   };
+
 
   return (
     <RoleContext.Provider

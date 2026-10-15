@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useDokumenList } from "@/services";
+import { useMasterReferensi } from "@/hooks/useMasterReferensi";
 import { FileText, Eye, Filter, Download, CheckCircle2, Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,7 +13,9 @@ import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@
 export default function AdminDokumenPage() {
   const [filterKat, setFilterKat] = useState("all");
   const { data: dokumenList, loading } = useDokumenList();
+  const { getOptions: getMasterOptions, getLabel: getMasterLabel } = useMasterReferensi();
 
+  const optKategoriDokumen = getMasterOptions("kategori_dokumen");
   const filtered = filterKat === "all" ? dokumenList : dokumenList.filter((d) => d.kategori === filterKat);
 
   return (
@@ -37,10 +40,11 @@ export default function AdminDokumenPage() {
             onChange={(e) => setFilterKat(e.target.value)}
           >
             <option value="all">Semua Kategori</option>
-            <option value="SK Pangkat">SK Kenaikan Pangkat</option>
-            <option value="SK Jabatan">SK Jabatan / Pelantikan</option>
-            <option value="Ijazah">Ijazah & Transkrip</option>
-            <option value="Sertifikat">Sertifikat Diklat</option>
+            {optKategoriDokumen.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
           </select>
         </div>
       </Card>

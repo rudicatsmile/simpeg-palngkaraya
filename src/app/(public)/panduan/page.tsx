@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Accordion,
   AccordionItem,
@@ -6,13 +8,12 @@ import {
 } from "@/components/ui/accordion";
 import { Card, CardContent } from "@/components/ui/card";
 import { User, Users, Shield, Briefcase, HelpCircle, CheckCircle2 } from "lucide-react";
-
-export const metadata = {
-  title: "Panduan Pengguna & FAQ | SIMPEG Daerah",
-  description: "Petunjuk teknis pengoperasian SIMPEG Daerah berdasarkan peran pengguna dan tanya jawab umum.",
-};
+import { useAppSettings } from "@/hooks/useAppSettings";
 
 export default function PanduanPage() {
+  const { settings } = useAppSettings();
+  const namaPemda = settings.nama_pemda || settings.nama_sub_aplikasi || "Pemerintah Daerah";
+
   const roleGuides = [
     {
       role: "Pegawai ASN",
@@ -96,9 +97,9 @@ export default function PanduanPage() {
             Panduan Pengguna SIMPEG Daerah
           </h1>
           <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-            Ikuti petunjuk langkah demi langkah sesuai peran Anda di lingkungan Pemerintah
-            Kabupaten Nusantara Jaya.
+            Ikuti petunjuk langkah demi langkah sesuai peran Anda di lingkungan {namaPemda}.
           </p>
+
         </div>
 
         {/* Role Cards */}

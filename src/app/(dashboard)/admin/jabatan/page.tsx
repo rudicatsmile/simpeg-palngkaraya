@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useJabatanList } from "@/services";
+import { useMasterReferensi } from "@/hooks/useMasterReferensi";
 import { Jabatan } from "@/types";
 import { Briefcase, Plus, Edit3, Trash2, CheckCircle2, Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -12,6 +13,7 @@ import { toast } from "sonner";
 
 export default function MasterJabatanPage() {
   const { data: listJabatan, loading } = useJabatanList();
+  const { getLabel, getBadgeColor } = useMasterReferensi();
 
   return (
     <div className="space-y-6">
@@ -80,9 +82,17 @@ export default function MasterJabatanPage() {
                     {j.nama}
                   </TableCell>
                   <TableCell>
-                    <Badge variant={j.jenis === "struktural" ? "default" : "secondary"}>
-                      {j.jenis.toUpperCase()}
-                    </Badge>
+                    <span
+                      className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold border ${
+                        getBadgeColor("jenis_jabatan", j.jenis) === "indigo"
+                          ? "bg-indigo-50 text-indigo-700 border-indigo-200"
+                          : getBadgeColor("jenis_jabatan", j.jenis) === "blue"
+                          ? "bg-blue-50 text-blue-700 border-blue-200"
+                          : "bg-cyan-50 text-cyan-700 border-cyan-200"
+                      }`}
+                    >
+                      {getLabel("jenis_jabatan", j.jenis, j.jenis)}
+                    </span>
                   </TableCell>
                   <TableCell className="text-xs font-mono">
                     {j.eselon || "-"}

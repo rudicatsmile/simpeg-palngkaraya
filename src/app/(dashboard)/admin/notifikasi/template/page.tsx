@@ -1,19 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowLeft, MessageSquare, Save, Copy, CheckCircle2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { useAppSettings } from "@/hooks/useAppSettings";
 import { toast } from "sonner";
 
 export default function TemplateNotifikasiPage() {
+  const { settings } = useAppSettings();
   const [selectedTemplate, setSelectedTemplate] = useState("wa_h180");
   const [templateContent, setTemplateContent] = useState(
-    "Halo {{nama}}, usulan kenaikan pangkat Anda {{sisa_hari}} hari lagi akan tiba (TMT: {{tmt_prediksi}}). Silakan cek checklist berkas SKP dan dokumen digital di SIMPEG Daerah Kabupaten Nusantara Jaya: {{app_url}}"
+    "Halo {{nama}}, usulan kenaikan pangkat Anda {{sisa_hari}} hari lagi akan tiba (TMT: {{tmt_prediksi}}). Silakan cek checklist berkas SKP dan dokumen digital di portal SIMPEG: {{app_url}}"
   );
+
+  useEffect(() => {
+    if (settings?.nama_pemda) {
+      setTemplateContent(
+        `Halo {{nama}}, usulan kenaikan pangkat Anda {{sisa_hari}} hari lagi akan tiba (TMT: {{tmt_prediksi}}). Silakan cek checklist berkas SKP dan dokumen digital di SIMPEG ${settings.nama_pemda}: {{app_url}}`
+      );
+    }
+  }, [settings?.nama_pemda]);
+
 
   const variables = [
     { tag: "{{nama}}", desc: "Nama lengkap pegawai tanpa gelar" },

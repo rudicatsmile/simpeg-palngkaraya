@@ -51,8 +51,9 @@ export default function KontakPage() {
             <span>Layanan Bantuan Kepegawaian</span>
           </div>
           <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-extrabold text-foreground">
-            Hubungi BKPSDM Kabupaten Nusantara Jaya
+            Hubungi {settings.singkatan_bkd || `BKPSDM ${settings.nama_pemda || settings.nama_sub_aplikasi || "Pemerintah Daerah"}`}
           </h1>
+
           <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
             Sampaikan pertanyaan, kendala verifikasi data, atau pengaduan teknis aplikasi. Tim
             Helpdesk siap melayani Anda pada hari dan jam kerja operasional.
@@ -166,9 +167,11 @@ export default function KontakPage() {
                   <div>
                     <p className="font-semibold text-foreground">Lokasi Sekretariat</p>
                     <p className="leading-relaxed">
-                      {settings.alamat_sekretariat ||
-                        "Jl. Praja Prajamukti No. 1, Kompleks Perkantoran Pemkab Nusantara Jaya"}
+                      {settings.alamat_kantor ||
+                        settings.alamat_sekretariat ||
+                        "Kompleks Perkantoran Pemerintah Daerah"}
                     </p>
+
                   </div>
                 </div>
 
@@ -188,7 +191,7 @@ export default function KontakPage() {
                   </div>
                   <div>
                     <p className="font-semibold text-foreground">Surel Resmi</p>
-                    <p>{settings.email_sekretariat || "bkpsdm@nusantarajaya.go.id"}</p>
+                    <p>{settings.email_sekretariat || "bkpsdm@palangkaraya.go.id"}</p>
                   </div>
                 </div>
 

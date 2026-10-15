@@ -1,5 +1,5 @@
 /**
- * Mesin Perhitungan Kenaikan Pangkat ASN (Kabupaten Nusantara Jaya)
+ * Mesin Perhitungan Kenaikan Pangkat ASN (Pemerintah Daerah)
  * Kepatuhan: Bab 6 & Bab 11 PRD, PP No. 11/2017, & Perka BKN No. 12/2002
  */
 

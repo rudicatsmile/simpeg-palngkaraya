@@ -12,6 +12,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Lock, Mail, ArrowRight, UserCheck, Eye, EyeOff, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { AuthCopyrightFooter } from "@/components/auth/AuthBranding";
+import { useAppSettings } from "@/hooks/useAppSettings";
 
 
 function LoginForm() {
@@ -19,9 +20,10 @@ function LoginForm() {
   const searchParams = useSearchParams();
   const nextParam = searchParams.get("next");
   const { setRole } = useRole();
+  const { settings } = useAppSettings();
 
-  const [email, setEmail] = useState("superadmin@nusantarajaya.go.id");
-  const [password, setPassword] = useState("Nusantara2026!");
+  const [email, setEmail] = useState("superadmin@palangkaraya.go.id");
+  const [password, setPassword] = useState("Admin2026!");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -94,7 +96,7 @@ function LoginForm() {
       setRole(detectedRole);
 
       toast.success("Autentikasi Berhasil!", {
-        description: `Selamat datang di SIMPEG Kabupaten Nusantara Jaya. Masuk sebagai ${detectedRole.toUpperCase()}.`,
+        description: `Selamat datang di SIMPEG ${settings.nama_pemda || "Pemerintah Daerah"}. Masuk sebagai ${detectedRole.toUpperCase()}.`,
       });
 
       // Tentukan rute dashboard tujuan sesuai peran atau query param `next`
@@ -111,7 +113,7 @@ function LoginForm() {
         } else if (detectedRole === "pimpinan") {
           targetRoute = "/eksekutif/dashboard";
         } else if (detectedRole === "auditor") {
-          targetRoute = "/auditor/dashboard";
+          targetRoute = "/audit/dashboard";
         } else {
           targetRoute = "/dashboard";
         }

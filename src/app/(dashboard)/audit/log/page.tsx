@@ -50,7 +50,7 @@ const DUMMY_AUTH_LOGS: AuthLogEntry[] = [
     nama: "Ahmad Dahlan, S.T., M.Kom.",
     status: "GAGAL",
     ipAddress: "114.125.45.89 (Telkomsel)",
-    lokasi: "Kab. Nusantara Jaya (Seluler)",
+    lokasi: "Wilayah Pemda (Seluler)",
     perangkat: "Safari / iPhone iOS 18",
     alasanGagal: "Kata sandi salah (Percobaan ke-1)"
   },
@@ -61,7 +61,7 @@ const DUMMY_AUTH_LOGS: AuthLogEntry[] = [
     nama: "Ahmad Dahlan, S.T., M.Kom.",
     status: "BERHASIL",
     ipAddress: "114.125.45.89 (Telkomsel)",
-    lokasi: "Kab. Nusantara Jaya (Seluler)",
+    lokasi: "Wilayah Pemda (Seluler)",
     perangkat: "Safari / iPhone iOS 18",
   },
   {
