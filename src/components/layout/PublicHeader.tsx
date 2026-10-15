@@ -4,7 +4,8 @@ import Link from "next/link";
 import { useState } from "react";
 import { Building2, Menu, X, ShieldCheck, ArrowRight, UserCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useAppSettings } from "@/services/app-settings.service";
+import { useAppSettings } from "@/hooks/useAppSettings";
+
 
 export function PublicHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);

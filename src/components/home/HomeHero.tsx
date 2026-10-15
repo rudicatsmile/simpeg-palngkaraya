@@ -4,7 +4,8 @@ import React from "react";
 import Link from "next/link";
 import { Sparkles, ArrowRight, CheckCircle2, Award, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useAppSettings } from "@/services/app-settings.service";
+import { useAppSettings } from "@/hooks/useAppSettings";
+
 
 export function HomeHero() {
   const { settings, loading } = useAppSettings();

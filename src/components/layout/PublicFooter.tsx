@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { Building2, Mail, Phone, MapPin, Shield } from "lucide-react";
-import { useAppSettings } from "@/services/app-settings.service";
+import { useAppSettings } from "@/hooks/useAppSettings";
+
 
 export function PublicFooter() {
   const { settings } = useAppSettings();

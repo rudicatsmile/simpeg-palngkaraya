@@ -1,6 +1,3 @@
-"use client";
-
-import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { AppSettings } from "@/types";
 
@@ -40,13 +37,7 @@ export const appSettingsService = {
         .eq("id", "default")
         .maybeSingle();
 
-      if (error) {
-        // Jika tabel belum ada atau RLS blok, return fallback default
-        console.warn("Informasi app_settings menggunakan fallback default:", error.message);
-        return DEFAULT_APP_SETTINGS;
-      }
-
-      if (!data) {
+      if (error || !data) {
         return DEFAULT_APP_SETTINGS;
       }
 
@@ -61,8 +52,7 @@ export const appSettingsService = {
         updated_at: data.updated_at,
         updated_by: data.updated_by,
       };
-    } catch (err) {
-      console.error("Gagal mengambil app_settings:", err);
+    } catch {
       return DEFAULT_APP_SETTINGS;
     }
   },
@@ -161,53 +151,3 @@ export const appSettingsService = {
     }
   },
 };
-
-/**
- * React Hook untuk mengakses dan memantau atribut konfigurasi aplikasi secara reaktif.
- */
-export function useAppSettings() {
-  const [settings, setSettings] = useState<AppSettings>(DEFAULT_APP_SETTINGS);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<any>(null);
-
-  const fetchSettings = useCallback(async () => {
-    try {
-      setLoading(true);
-      const data = await appSettingsService.get();
-      setSettings(data);
-      setError(null);
-    } catch (err) {
-      setError(err);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchSettings();
-
-    // Listener custom event untuk sinkronisasi instan antar komponen saat admin menyimpan data
-    const handleUpdate = (e: Event) => {
-      const customEvent = e as CustomEvent<AppSettings>;
-      if (customEvent.detail) {
-        setSettings(customEvent.detail);
-      } else {
-        fetchSettings();
-      }
-    };
-
-    if (typeof window !== "undefined") {
-      window.addEventListener("app-settings-updated", handleUpdate);
-      return () => {
-        window.removeEventListener("app-settings-updated", handleUpdate);
-      };
-    }
-  }, [fetchSettings]);
-
-  return {
-    settings,
-    loading,
-    error,
-    refreshSettings: fetchSettings,
-  };
-}
