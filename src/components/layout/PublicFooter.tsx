@@ -1,7 +1,12 @@
+"use client";
+
 import Link from "next/link";
 import { Building2, Mail, Phone, MapPin, Shield } from "lucide-react";
+import { useAppSettings } from "@/services/app-settings.service";
 
 export function PublicFooter() {
+  const { settings } = useAppSettings();
+
   return (
     <footer className="border-t border-border bg-card text-muted-foreground mt-auto">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
@@ -9,17 +14,28 @@ export function PublicFooter() {
           {/* Kolom 1: Profil */}
           <div className="space-y-4 md:col-span-1">
             <div className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold">
-                <Building2 className="h-5 w-5" />
-              </div>
+              {settings.logo_url ? (
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-card border border-border/60 p-1">
+                  <img
+                    src={settings.logo_url}
+                    alt={settings.nama_aplikasi}
+                    className="h-full w-full object-contain"
+                  />
+                </div>
+              ) : (
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold">
+                  <Building2 className="h-5 w-5" />
+                </div>
+              )}
               <span className="font-heading font-bold text-foreground text-base">
-                SIMPEG Daerah
+                {settings.nama_aplikasi}
               </span>
             </div>
             <p className="text-xs leading-relaxed">
-              Platform Manajemen Kepegawaian ASN Terpadu Kabupaten Nusantara Jaya.
+              Platform Manajemen Kepegawaian ASN Terpadu {settings.nama_sub_aplikasi}.
               Mendukung tata kelola SDM aparatur yang transparan, profesional, dan akuntabel.
             </p>
+
             <div className="flex items-center gap-2 text-xs text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 p-2 rounded-lg border border-emerald-200 dark:border-emerald-900">
               <Shield className="h-4 w-4 shrink-0" />
               <span>Sesuai Regulasi UU No. 20 Tahun 2023 tentang ASN</span>
@@ -121,7 +137,7 @@ export function PublicFooter() {
 
         {/* Hak cipta */}
         <div className="pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
-          <p>© {new Date().getFullYear()} BKPSDM Kabupaten Nusantara Jaya. Hak Cipta Dilindungi Undang-Undang.</p>
+          <p>© {new Date().getFullYear()} BKPSDM {settings.nama_sub_aplikasi}. Hak Cipta Dilindungi Undang-Undang.</p>
           <div className="flex gap-4">
             <Link href="/kebijakan-privasi" className="hover:text-primary transition-colors">
               Kebijakan Privasi

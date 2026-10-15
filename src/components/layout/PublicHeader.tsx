@@ -4,9 +4,11 @@ import Link from "next/link";
 import { useState } from "react";
 import { Building2, Menu, X, ShieldCheck, ArrowRight, UserCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAppSettings } from "@/services/app-settings.service";
 
 export function PublicHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { settings } = useAppSettings();
 
   const navLinks = [
     { href: "/", label: "Beranda" },
@@ -21,21 +23,32 @@ export function PublicHeader() {
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Brand */}
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-md shadow-primary/20 group-hover:scale-105 transition-transform">
-            <Building2 className="h-5 w-5" />
-          </div>
+          {settings.logo_url ? (
+            <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-card border border-border/60 p-1 shadow-md shadow-primary/10 group-hover:scale-105 transition-transform overflow-hidden">
+              <img
+                src={settings.logo_url}
+                alt={settings.nama_aplikasi}
+                className="h-full w-full object-contain"
+              />
+            </div>
+          ) : (
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-md shadow-primary/20 group-hover:scale-105 transition-transform">
+              <Building2 className="h-5 w-5" />
+            </div>
+          )}
           <div className="flex flex-col">
             <span className="font-heading text-lg font-bold tracking-tight text-foreground flex items-center gap-1.5">
-              SIMPEG Daerah
+              {settings.nama_aplikasi}
               <span className="rounded-md bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
                 PRO
               </span>
             </span>
             <span className="text-[11px] font-medium text-muted-foreground leading-none">
-              Kabupaten Nusantara Jaya
+              {settings.nama_sub_aplikasi}
             </span>
           </div>
         </Link>
+
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6">

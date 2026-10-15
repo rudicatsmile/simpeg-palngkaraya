@@ -16,11 +16,12 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { HomeHero } from "@/components/home/HomeHero";
 
 export const metadata = {
-  title: "Beranda | SIMPEG Daerah - Kabupaten Nusantara Jaya",
+  title: "Beranda | SIMPEG Daerah",
   description:
-    "Sistem Informasi Manajemen Kepegawaian terpadu Kabupaten Nusantara Jaya dengan sistem peringatan dini H-180 kepangkatan dan portal mandiri ASN.",
+    "Sistem Informasi Manajemen Kepegawaian terpadu dengan sistem peringatan dini H-180 kepangkatan dan portal mandiri ASN.",
 };
 
 export default function HomePage() {
@@ -72,125 +73,9 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-primary/5 via-background to-background pt-16 pb-20 lg:pt-24 lg:pb-32">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3.5 py-1 text-xs font-semibold text-primary">
-                <Sparkles className="h-3.5 w-3.5" />
-                <span>Transformasi Digital Kepegawaian Terpadu</span>
-              </div>
+      {/* Dynamic Hero Section */}
+      <HomeHero />
 
-              <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-foreground leading-[1.15]">
-                SIMPEG Daerah{" "}
-                <span className="text-primary block mt-1">
-                  Kabupaten Nusantara Jaya
-                </span>
-              </h1>
-
-              <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-                Kelola seluruh siklus hidup ASN mulai dari data induk, prediksi kenaikan pangkat
-                tepat waktu, mutasi, penilaian kinerja SKP, hingga persiapan pensiun dalam satu
-                ekosistem self-service yang aman dan prediktif.
-              </p>
-
-              <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start pt-2">
-                <Link href="/login">
-                  <Button size="lg" className="w-full sm:w-auto font-semibold gap-2 shadow-md">
-                    Masuk ke Portal ASN
-                    <ArrowRight className="h-4 w-4" />
-                  </Button>
-                </Link>
-                <Link href="/aktivasi">
-                  <Button variant="outline" size="lg" className="w-full sm:w-auto font-medium">
-                    Aktivasi Akun Pegawai
-                  </Button>
-                </Link>
-                <Link href="/fitur">
-                  <Button variant="ghost" size="lg" className="w-full sm:w-auto text-muted-foreground hover:text-foreground">
-                    Jelajahi Fitur
-                  </Button>
-                </Link>
-              </div>
-
-              <div className="flex items-center justify-center lg:justify-start gap-6 pt-4 text-xs text-muted-foreground">
-                <span className="flex items-center gap-1.5">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                  Tanpa Berkas Kertas Fisik
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                  Early Warning H-180
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                  Keamanan RLS PostgreSQL
-                </span>
-              </div>
-            </div>
-
-            {/* Hero Graphic Card */}
-            <div className="lg:col-span-5">
-              <div className="relative mx-auto max-w-md lg:max-w-none">
-                <div className="rounded-2xl border border-border bg-card p-6 shadow-xl space-y-4">
-                  <div className="flex items-center justify-between border-b border-border/80 pb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center font-bold text-primary text-sm">
-                        BS
-                      </div>
-                      <div>
-                        <p className="text-xs font-bold text-foreground">Dr. Budi Santoso, S.E., M.M.</p>
-                        <p className="text-[11px] text-muted-foreground">NIP. 198506122010011003 • Penata (III/c)</p>
-                      </div>
-                    </div>
-                    <span className="rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 px-2.5 py-0.5 text-[10px] font-bold">
-                      Aktif
-                    </span>
-                  </div>
-
-                  {/* Early Warning Card Preview */}
-                  <div className="rounded-xl bg-primary/5 p-4 border border-primary/20 space-y-2">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="font-semibold text-primary flex items-center gap-1.5">
-                        <Award className="h-4 w-4" />
-                        Kenaikan Pangkat Reguler
-                      </span>
-                      <span className="font-bold text-foreground tabular-nums">180 Hari Lagi</span>
-                    </div>
-                    <p className="text-[11px] text-muted-foreground">
-                      Prediksi TMT: 1 April 2026 menuju Penata Tk. I (III/d). Seluruh syarat administrasi 100% lengkap.
-                    </p>
-                    <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
-                      <div className="bg-primary h-2 rounded-full w-[85%]" />
-                    </div>
-                  </div>
-
-                  {/* Sisa Cuti */}
-                  <div className="grid grid-cols-2 gap-3 pt-1">
-                    <div className="rounded-xl border border-border bg-muted/20 p-3 text-center">
-                      <p className="text-[11px] text-muted-foreground">Sisa Cuti Tahunan</p>
-                      <p className="text-xl font-bold font-heading text-foreground tabular-nums">9 Hari</p>
-                    </div>
-                    <div className="rounded-xl border border-border bg-muted/20 p-3 text-center">
-                      <p className="text-[11px] text-muted-foreground">Predikat SKP 2024</p>
-                      <p className="text-base font-bold font-heading text-emerald-600">Sangat Baik</p>
-                    </div>
-                  </div>
-
-                  <div className="pt-2">
-                    <Link href="/dashboard" className="w-full">
-                      <Button variant="outline" className="w-full text-xs font-semibold justify-center">
-                        Buka Dasbor Simulasi Pegawai →
-                      </Button>
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Statistik Section */}
       <section className="border-y border-border bg-card py-12">

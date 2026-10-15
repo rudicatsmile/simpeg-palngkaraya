@@ -10,3 +10,4 @@ export * from "./disiplin.service";
 export * from "./talent.service";
 export * from "./audit-notif.service";
 export * from "./dashboard.service";
+export * from "./app-settings.service";

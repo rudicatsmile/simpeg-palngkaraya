@@ -388,3 +388,16 @@ export interface AuditLog {
   user_agent: string;
   created_at: string;
 }
+
+export interface AppSettings {
+  id: string;
+  nama_aplikasi: string;
+  nama_sub_aplikasi: string;
+  slogan: string;
+  teks_perkenalan: string;
+  logo_url: string | null;
+  favicon_url: string | null;
+  updated_at?: string;
+  updated_by?: string | null;
+}
+
