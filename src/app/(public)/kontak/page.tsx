@@ -6,9 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
+import { useAppSettings } from "@/hooks/useAppSettings";
 
 export default function KontakPage() {
+  const { settings } = useAppSettings();
   const [formData, setFormData] = useState({
+
     nama: "",
     nip: "",
     email: "",
@@ -152,7 +155,7 @@ export default function KontakPage() {
           <div className="lg:col-span-5 space-y-6">
             <Card className="p-6 space-y-6">
               <h3 className="font-heading font-bold text-base text-foreground">
-                Kantor Pusat BKPSDM
+                {settings.nama_sekretariat || "Kantor Pusat BKPSDM"}
               </h3>
 
               <div className="space-y-4 text-xs text-muted-foreground">
@@ -163,7 +166,8 @@ export default function KontakPage() {
                   <div>
                     <p className="font-semibold text-foreground">Lokasi Sekretariat</p>
                     <p className="leading-relaxed">
-                      Gedung C Kompleks Perkantoran Bupati Nusantara Jaya, Jl. Praja Prajamukti No. 1
+                      {settings.alamat_sekretariat ||
+                        "Jl. Praja Prajamukti No. 1, Kompleks Perkantoran Pemkab Nusantara Jaya"}
                     </p>
                   </div>
                 </div>
@@ -174,7 +178,7 @@ export default function KontakPage() {
                   </div>
                   <div>
                     <p className="font-semibold text-foreground">Telepon & WhatsApp Helpdesk</p>
-                    <p>(021) 8765-4321 / 0812-3456-7890 (Khusus Pesan WhatsApp)</p>
+                    <p>{settings.telepon_sekretariat || "(021) 8765-4321 / 0812-3456-7890"}</p>
                   </div>
                 </div>
 
@@ -184,7 +188,7 @@ export default function KontakPage() {
                   </div>
                   <div>
                     <p className="font-semibold text-foreground">Surel Resmi</p>
-                    <p>layanan.bkpsdm@nusantarajaya.go.id</p>
+                    <p>{settings.email_sekretariat || "bkpsdm@nusantarajaya.go.id"}</p>
                   </div>
                 </div>
 
@@ -193,13 +197,13 @@ export default function KontakPage() {
                     <Clock className="h-4 w-4" />
                   </div>
                   <div>
-                    <p className="font-semibold text-foreground">Jam Pelayanan Tatap Muka</p>
-                    <p>Senin – Kamis : 08.00 – 15.30 WIB</p>
-                    <p>Jumat : 08.00 – 16.00 WIB (Istirahat 11.30 – 13.00)</p>
+                    <p className="font-semibold text-foreground">Jam Pelayanan Operasional</p>
+                    <p>{settings.jam_operasional_sekretariat || "Senin - Jumat: 07.30 - 16.00 WIB"}</p>
                   </div>
                 </div>
               </div>
             </Card>
+
 
             <div className="rounded-xl bg-secondary/60 p-4 border border-primary/20 space-y-2">
               <span className="text-xs font-bold text-primary flex items-center gap-1.5">

@@ -95,6 +95,11 @@ export default function PengaturanUmumAdminPage() {
         slogan: branding.slogan,
         teks_perkenalan: branding.teks_perkenalan,
         nama_hak_cipta: branding.nama_hak_cipta,
+        nama_sekretariat: branding.nama_sekretariat,
+        alamat_sekretariat: branding.alamat_sekretariat,
+        telepon_sekretariat: branding.telepon_sekretariat,
+        email_sekretariat: branding.email_sekretariat,
+        jam_operasional_sekretariat: branding.jam_operasional_sekretariat,
         logo_url: branding.logo_url,
         favicon_url: branding.favicon_url,
       });
@@ -105,6 +110,7 @@ export default function PengaturanUmumAdminPage() {
         if (data) setBranding(data);
         toast.success("Atribut branding aplikasi berhasil disimpan ke database Supabase!");
       }
+
 
     } catch (err: any) {
       toast.error("Terjadi kesalahan: " + err.message);
@@ -322,6 +328,82 @@ export default function PengaturanUmumAdminPage() {
                     </p>
                   </div>
 
+                  {/* Informasi Sekretariat & Kontak Layanan */}
+                  <div className="pt-4 border-t border-slate-100 space-y-4">
+                    <div className="flex items-center gap-2">
+                      <div className="h-6 w-6 rounded-md bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-xs">
+                        🏢
+                      </div>
+                      <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                        Informasi Sekretariat & Kontak Layanan (Tampil di Footer / Fitur)
+                      </h4>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-xs font-semibold text-slate-700 block mb-1">
+                          Nama Sekretariat
+                        </label>
+                        <Input
+                          placeholder="Contoh: Sekretariat BKPSDM"
+                          value={branding.nama_sekretariat || ""}
+                          onChange={(e) => setBranding({ ...branding, nama_sekretariat: e.target.value })}
+                          disabled={loadingBranding}
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs font-semibold text-slate-700 block mb-1">
+                          Nomor Telepon / Kontak
+                        </label>
+                        <Input
+                          placeholder="Contoh: (021) 8765-4321 / 0812-3456-7890"
+                          value={branding.telepon_sekretariat || ""}
+                          onChange={(e) => setBranding({ ...branding, telepon_sekretariat: e.target.value })}
+                          disabled={loadingBranding}
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-semibold text-slate-700 block mb-1">
+                        Alamat Lengkap Sekretariat
+                      </label>
+                      <Input
+                        placeholder="Contoh: Jl. Praja Prajamukti No. 1, Kompleks Perkantoran Pemkab Nusantara Jaya"
+                        value={branding.alamat_sekretariat || ""}
+                        onChange={(e) => setBranding({ ...branding, alamat_sekretariat: e.target.value })}
+                        disabled={loadingBranding}
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-xs font-semibold text-slate-700 block mb-1">
+                          Email Resmi Sekretariat
+                        </label>
+                        <Input
+                          placeholder="Contoh: bkpsdm@nusantarajaya.go.id"
+                          value={branding.email_sekretariat || ""}
+                          onChange={(e) => setBranding({ ...branding, email_sekretariat: e.target.value })}
+                          disabled={loadingBranding}
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs font-semibold text-slate-700 block mb-1">
+                          Jam Operasional
+                        </label>
+                        <Input
+                          placeholder="Contoh: Senin - Jumat: 07.30 - 16.00 WIB"
+                          value={branding.jam_operasional_sekretariat || ""}
+                          onChange={(e) =>
+                            setBranding({ ...branding, jam_operasional_sekretariat: e.target.value })
+                          }
+                          disabled={loadingBranding}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
                   {/* Upload Assets Section (Logo & Favicon) */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-100">
                     {/* 6. Logo Aplikasi */}
@@ -341,6 +423,7 @@ export default function PengaturanUmumAdminPage() {
                           </button>
                         )}
                       </div>
+
 
 
                       <div className="flex items-center gap-3">
@@ -561,6 +644,31 @@ export default function PengaturanUmumAdminPage() {
                         </div>
                       </div>
 
+                      {/* Mockup Sekretariat Block */}
+                      <div className="pt-2.5 mt-2.5 border-t border-slate-100 space-y-1 text-[10px] bg-slate-50/70 p-2.5 rounded-lg border border-slate-200/60">
+                        <p className="font-bold text-slate-800 text-xs">
+                          {branding.nama_sekretariat || "Sekretariat BKPSDM"}
+                        </p>
+                        <p className="flex items-start gap-1.5 text-slate-500">
+                          <MapPin className="h-3 w-3 text-indigo-600 shrink-0 mt-0.5" />
+                          <span className="leading-tight">
+                            {branding.alamat_sekretariat ||
+                              "Jl. Praja Prajamukti No. 1, Kompleks Perkantoran Pemkab Nusantara Jaya"}
+                          </span>
+                        </p>
+                        <p className="flex items-center gap-1.5 text-slate-500">
+                          <Phone className="h-3 w-3 text-indigo-600 shrink-0" />
+                          <span>{branding.telepon_sekretariat || "(021) 8765-4321 / 0812-3456-7890"}</span>
+                        </p>
+                        <p className="flex items-center gap-1.5 text-slate-500">
+                          <Mail className="h-3 w-3 text-indigo-600 shrink-0" />
+                          <span>{branding.email_sekretariat || "bkpsdm@nusantarajaya.go.id"}</span>
+                        </p>
+                        <p className="text-[9px] text-slate-400 pt-0.5">
+                          {branding.jam_operasional_sekretariat || "Senin - Jumat: 07.30 - 16.00 WIB"}
+                        </p>
+                      </div>
+
                       {/* Mockup Footer Copyright */}
                       <div className="pt-3 mt-2 border-t border-slate-100 flex items-center justify-between text-[9px] text-slate-400">
                         <p className="truncate max-w-[280px]">
@@ -575,6 +683,7 @@ export default function PengaturanUmumAdminPage() {
                       </div>
                     </div>
                   </div>
+
 
 
                   {/* Keterangan Sinkronisasi */}

@@ -114,27 +114,35 @@ export function PublicFooter() {
           {/* Kolom 4: Kontak BKPSDM */}
           <div className="space-y-3">
             <h4 className="text-sm font-semibold text-foreground font-heading">
-              Sekretariat BKPSDM
+              {settings.nama_sekretariat || "Sekretariat BKPSDM"}
             </h4>
             <div className="space-y-2 text-xs">
               <p className="flex items-start gap-2">
                 <MapPin className="h-4 w-4 shrink-0 text-primary mt-0.5" />
-                <span>Jl. Praja Prajamukti No. 1, Kompleks Perkantoran Pemkab Nusantara Jaya</span>
+                <span>
+                  {settings.alamat_sekretariat ||
+                    "Jl. Praja Prajamukti No. 1, Kompleks Perkantoran Pemkab Nusantara Jaya"}
+                </span>
               </p>
               <p className="flex items-center gap-2">
                 <Phone className="h-4 w-4 shrink-0 text-primary" />
-                <span>(021) 8765-4321 / 0812-3456-7890</span>
+                <span>
+                  {settings.telepon_sekretariat || "(021) 8765-4321 / 0812-3456-7890"}
+                </span>
               </p>
               <p className="flex items-center gap-2">
                 <Mail className="h-4 w-4 shrink-0 text-primary" />
-                <span>bkpsdm@nusantarajaya.go.id</span>
+                <span>
+                  {settings.email_sekretariat || "bkpsdm@nusantarajaya.go.id"}
+                </span>
               </p>
               <p className="text-[11px] text-muted-foreground pt-1">
-                Senin - Jumat: 07.30 - 16.00 WIB
+                {settings.jam_operasional_sekretariat || "Senin - Jumat: 07.30 - 16.00 WIB"}
               </p>
             </div>
           </div>
         </div>
+
 
         {/* Hak cipta */}
         <div className="pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">

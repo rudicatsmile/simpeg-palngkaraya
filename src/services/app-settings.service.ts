@@ -9,6 +9,11 @@ export const DEFAULT_APP_SETTINGS: AppSettings = {
   teks_perkenalan:
     "Kelola seluruh siklus hidup ASN mulai dari data induk, prediksi kenaikan pangkat tepat waktu, mutasi, penilaian kinerja SKP, hingga persiapan pensiun dalam satu ekosistem self-service yang aman dan prediktif.",
   nama_hak_cipta: "© 2026 Pemerintah Kabupaten Nusantara Jaya. Hak Cipta Dilindungi Undang-Undang.",
+  nama_sekretariat: "Sekretariat BKPSDM",
+  alamat_sekretariat: "Jl. Praja Prajamukti No. 1, Kompleks Perkantoran Pemkab Nusantara Jaya",
+  telepon_sekretariat: "(021) 8765-4321 / 0812-3456-7890",
+  email_sekretariat: "bkpsdm@nusantarajaya.go.id",
+  jam_operasional_sekretariat: "Senin - Jumat: 07.30 - 16.00 WIB",
   logo_url: null,
   favicon_url: null,
 };
@@ -53,6 +58,12 @@ export const appSettingsService = {
         slogan: data.slogan || DEFAULT_APP_SETTINGS.slogan,
         teks_perkenalan: data.teks_perkenalan || DEFAULT_APP_SETTINGS.teks_perkenalan,
         nama_hak_cipta: data.nama_hak_cipta || defaultCopyright,
+        nama_sekretariat: data.nama_sekretariat || DEFAULT_APP_SETTINGS.nama_sekretariat,
+        alamat_sekretariat: data.alamat_sekretariat || DEFAULT_APP_SETTINGS.alamat_sekretariat,
+        telepon_sekretariat: data.telepon_sekretariat || DEFAULT_APP_SETTINGS.telepon_sekretariat,
+        email_sekretariat: data.email_sekretariat || DEFAULT_APP_SETTINGS.email_sekretariat,
+        jam_operasional_sekretariat:
+          data.jam_operasional_sekretariat || DEFAULT_APP_SETTINGS.jam_operasional_sekretariat,
         logo_url: data.logo_url || null,
         favicon_url: data.favicon_url || null,
         updated_at: data.updated_at,
@@ -62,6 +73,7 @@ export const appSettingsService = {
       return DEFAULT_APP_SETTINGS;
     }
   },
+
 
 
   /**

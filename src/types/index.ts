@@ -396,10 +396,16 @@ export interface AppSettings {
   slogan: string;
   teks_perkenalan: string;
   nama_hak_cipta?: string;
+  nama_sekretariat?: string;
+  alamat_sekretariat?: string;
+  telepon_sekretariat?: string;
+  email_sekretariat?: string;
+  jam_operasional_sekretariat?: string;
   logo_url: string | null;
   favicon_url: string | null;
   updated_at?: string;
   updated_by?: string | null;
 }
+
 
 
