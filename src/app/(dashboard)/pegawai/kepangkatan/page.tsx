@@ -1,6 +1,13 @@
 "use client";
 
-import { usePegawaiList, useUsulanPangkatList, useRiwayatPangkatList } from "@/services";
+import { usePegawaiList, useUsulanPangkatList, useRiwayatPangkatList, useAturanKepangkatanList } from "@/services";
+import { useAppSettings } from "@/hooks/useAppSettings";
+import {
+  hitungPrediksiKenaikanPangkat,
+  getNextGolongan,
+  DAFTAR_GOLONGAN_PANGKAT,
+  formatTanggalIndo,
+} from "@/lib/kepangkatan-engine";
 import {
   Award,
   Calendar,
@@ -11,6 +18,8 @@ import {
   ArrowRight,
   ShieldCheck,
   Building2,
+  FileText,
+  Loader2,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -18,10 +27,8 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 
 export default function KepangkatanPegawaiPage() {
+  const { settings } = useAppSettings();
   const { data: pegawaiList } = usePegawaiList();
-  const { data: usulanList } = useUsulanPangkatList();
-  const { data: riwayatList } = useRiwayatPangkatList();
-
   const pegawai = pegawaiList[0] || {
     id: "e1a1b1c1-0001-4000-8000-000000000001",
     nama_lengkap: "Budi Santoso",
@@ -35,6 +42,10 @@ export default function KepangkatanPegawaiPage() {
     tmt_golongan: "2022-04-01",
   };
 
+  const { data: usulanList } = useUsulanPangkatList(pegawai.id);
+  const { data: riwayatList, loading: loadingRiwayat } = useRiwayatPangkatList(pegawai.id);
+  const { data: aturanList } = useAturanKepangkatanList();
+
   const usulan = usulanList[0] || {
     golongan_tujuan: "IV/b",
     tmt_usulan: "2026-04-01",
@@ -42,35 +53,79 @@ export default function KepangkatanPegawaiPage() {
     catatan: "Berkas lengkap sesuai kriteria H-180 merit system",
   };
 
-  const riwayatPangkat = riwayatList.length > 0 ? riwayatList.map((r) => ({
+  // Riwayat pangkat murni dari database Supabase dengan tanggal terformat rapi
+  const riwayatPangkat = riwayatList.map((r) => ({
+    id: r.id,
     golongan: r.golongan,
     pangkat: r.pangkat,
-    tmt: r.tmt,
+    tmt: formatTanggalIndo(r.tmt),
     no_sk: r.nomor_sk || "-",
-    tgl_sk: r.tanggal_sk || "-",
-  })) : [
-    {
-      golongan: "III/c",
-      pangkat: "Penata",
-      tmt: "1 April 2022",
-      no_sk: "823.3/045/BKPSDM/2022",
-      tgl_sk: "25 Maret 2022",
-    },
-    {
-      golongan: "III/b",
-      pangkat: "Penata Muda Tingkat I",
-      tmt: "1 April 2018",
-      no_sk: "823.3/089/BKPSDM/2018",
-      tgl_sk: "20 Maret 2018",
-    },
-    {
-      golongan: "III/a",
-      pangkat: "Penata Muda",
-      tmt: "1 Maret 2011",
-      no_sk: "821.1/012/BKPSDM/2011",
-      tgl_sk: "15 Februari 2011",
-    },
+    tgl_sk: r.tanggal_sk ? formatTanggalIndo(r.tanggal_sk) : "-",
+  }));
+
+  // Kalkulasi mesin prediksi kepangkatan berdasarkan TMT golongan pegawai
+  const prediksi = hitungPrediksiKenaikanPangkat(pegawai.tmt_golongan || "2022-04-01");
+
+  // Penentuan golongan dan pangkat tujuan
+  const targetGolongan = usulan?.golongan_tujuan || getNextGolongan(pegawai.golongan || "IV/a");
+  const targetPangkat = DAFTAR_GOLONGAN_PANGKAT[targetGolongan] || "Pangkat Tujuan";
+  const targetPangkatDanGolongan = `${targetPangkat} (${targetGolongan})`;
+
+  // Penentuan jenis usulan (Reguler, Pilihan, atau KGB)
+  const jenisUsulanLabel = usulan?.jenis
+    ? usulan.jenis.charAt(0).toUpperCase() + usulan.jenis.slice(1)
+    : "Reguler";
+
+  // Tanggal TMT prediksi resmi format Indonesia
+  const tmtPrediksiStr = usulan?.tmt_usulan || prediksi.tmtPrediksi;
+  const tmtPrediksiFormatted = formatTanggalIndo(tmtPrediksiStr);
+
+  // Template badge early warning dari app_settings
+  const earlyWarningTemplate =
+    settings.label_early_warning_kp || "Status Early Warning: {fase} Kenaikan Pangkat";
+  const badgeEarlyWarningText = earlyWarningTemplate.replace("{fase}", prediksi.faseNotifikasi);
+
+  // Template judul prediksi TMT dari app_settings
+  const titlePrediksiTemplate =
+    settings.template_prediksi_tmt || "Prediksi TMT Kenaikan Pangkat: {tmt}";
+  const titlePrediksiText = titlePrediksiTemplate.replace("{tmt}", tmtPrediksiFormatted);
+
+  // Template countdown sisa hari dari app_settings
+  const countdownTemplate = settings.label_countdown_kp || "{hari} Hari Lagi";
+  let countdownText = "";
+  if (prediksi.sisaHari < 0) {
+    countdownText = `Terlewat ${Math.abs(prediksi.sisaHari)} Hari`;
+  } else if (prediksi.sisaHari === 0) {
+    countdownText = "Hari Ini";
+  } else {
+    countdownText = countdownTemplate.replace("{hari}", String(prediksi.sisaHari));
+  }
+
+  // Label subteks dari app_settings
+  const labelMenujuGolongan = settings.label_menuju_golongan || "Menuju Golongan";
+  const labelJenisUsulan = settings.label_jenis_usulan || "Jenis Usulan";
+  const labelSubteksTmt = settings.label_subteks_tmt || "TMT Terhitung Mulai Tanggal";
+  const labelJudulChecklist =
+    settings.label_judul_checklist_kp || "Checklist Kelengkapan Syarat Berkas Administrasi:";
+
+  // Ambil checklist syarat dinamis dari tabel aturan_kepangkatan berdasarkan golongan pegawai
+  const aturanAktif = aturanList.find(
+    (a) =>
+      (a.golongan_dari === pegawai.golongan && a.golongan_ke === targetGolongan) ||
+      a.golongan_dari === pegawai.golongan ||
+      a.golongan_ke === targetGolongan
+  );
+
+  const fallbackChecklist = [
+    `SK Pangkat Terakhir (${pegawai.golongan || "IV/a"}) Lengkap Tersimpan di Storage`,
+    "Penilaian Kinerja (SKP) 2 Tahun Terakhir minimal Baik",
+    "Sertifikat Pelatihan Kepemimpinan Pengawas (PKP) Terverifikasi",
+    "Surat Keterangan Bebas Hukuman Disiplin Tingkat Sedang/Berat (Aktif: Nihil)",
   ];
+
+  const itemsChecklist = (aturanAktif?.checklist && aturanAktif.checklist.length > 0)
+    ? aturanAktif.checklist
+    : fallbackChecklist;
 
   return (
     <div className="space-y-6">
@@ -91,22 +146,22 @@ export default function KepangkatanPegawaiPage() {
             <div className="space-y-1">
               <div className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
                 <Clock className="h-3.5 w-3.5" />
-                <span>Status Early Warning: H-180 Kenaikan Pangkat</span>
+                <span>{badgeEarlyWarningText}</span>
               </div>
               <h2 className="font-heading text-2xl font-extrabold text-foreground">
-                Prediksi TMT Kenaikan Pangkat: 1 April 2026
+                {titlePrediksiText}
               </h2>
               <p className="text-xs text-muted-foreground">
-                Menuju Golongan: <strong>Penata Tingkat I (III/d)</strong> • Jenis Usulan: <strong>Reguler</strong>
+                {labelMenujuGolongan}: <strong>{targetPangkatDanGolongan}</strong> • {labelJenisUsulan}: <strong>{jenisUsulanLabel}</strong>
               </p>
             </div>
 
             <div className="text-left md:text-right">
               <p className="text-3xl font-extrabold font-heading text-primary tabular-nums">
-                180 Hari Lagi
+                {countdownText}
               </p>
               <p className="text-[11px] text-muted-foreground">
-                TMT Terhitung Mulai Tanggal
+                {labelSubteksTmt}
               </p>
             </div>
           </div>
@@ -114,25 +169,15 @@ export default function KepangkatanPegawaiPage() {
           {/* Checklist Syarat Berkas Digital */}
           <div className="rounded-xl border border-border bg-card p-4 space-y-3">
             <h3 className="font-heading font-semibold text-xs text-foreground uppercase tracking-wider">
-              Checklist Kelengkapan Syarat Berkas Administrasi:
+              {labelJudulChecklist}
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-              <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400">
-                <CheckCircle2 className="h-4 w-4 shrink-0" />
-                <span>SKP 2 Tahun Terakhir minimal Baik (Tercapai: 94.50 & 93.80)</span>
-              </div>
-              <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400">
-                <CheckCircle2 className="h-4 w-4 shrink-0" />
-                <span>Sertifikat Pelatihan Kepemimpinan Pengawas (PKP) Terverifikasi</span>
-              </div>
-              <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400">
-                <CheckCircle2 className="h-4 w-4 shrink-0" />
-                <span>Bebas Hukuman Disiplin Tingkat Sedang/Berat (Aktif: Nihil)</span>
-              </div>
-              <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400">
-                <CheckCircle2 className="h-4 w-4 shrink-0" />
-                <span>SK Pangkat Terakhir (III/c) Lengkap Tersimpan di Storage</span>
-              </div>
+              {itemsChecklist.map((item, idx) => (
+                <div key={idx} className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400">
+                  <CheckCircle2 className="h-4 w-4 shrink-0" />
+                  <span>{item}</span>
+                </div>
+              ))}
             </div>
           </div>
 
@@ -187,20 +232,39 @@ export default function KepangkatanPegawaiPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {riwayatPangkat.map((rw, i) => (
-                <TableRow key={i}>
-                  <TableCell className="font-bold text-xs text-primary">{rw.golongan}</TableCell>
-                  <TableCell className="font-medium text-xs text-foreground">{rw.pangkat}</TableCell>
-                  <TableCell className="text-xs font-mono">{rw.tmt}</TableCell>
-                  <TableCell className="text-xs font-mono text-muted-foreground">{rw.no_sk}</TableCell>
-                  <TableCell className="text-xs text-muted-foreground">{rw.tgl_sk}</TableCell>
-                  <TableCell className="text-right">
-                    <Button variant="outline" size="sm" className="text-xs h-7">
-                      Unduh Salinan SK
-                    </Button>
+              {loadingRiwayat ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center py-10 text-muted-foreground text-xs">
+                    <Loader2 className="h-5 w-5 animate-spin mx-auto mb-2 text-primary" />
+                    Memuat riwayat kenaikan pangkat dari database...
                   </TableCell>
                 </TableRow>
-              ))}
+              ) : riwayatPangkat.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center py-12 text-muted-foreground text-xs">
+                    <FileText className="h-8 w-8 mx-auto mb-2 text-muted-foreground/60" />
+                    <p className="font-semibold text-foreground text-sm">Belum Ada Riwayat Kenaikan Pangkat</p>
+                    <p className="text-[11px] text-muted-foreground mt-0.5">
+                      Surat Keputusan (SK) kenaikan pangkat resmi yang tercatat di database akan otomatis tampil di sini.
+                    </p>
+                  </TableCell>
+                </TableRow>
+              ) : (
+                riwayatPangkat.map((rw, i) => (
+                  <TableRow key={rw.id || i}>
+                    <TableCell className="font-bold text-xs text-primary">{rw.golongan}</TableCell>
+                    <TableCell className="font-medium text-xs text-foreground">{rw.pangkat}</TableCell>
+                    <TableCell className="text-xs font-mono">{rw.tmt}</TableCell>
+                    <TableCell className="text-xs font-mono text-muted-foreground">{rw.no_sk}</TableCell>
+                    <TableCell className="text-xs text-muted-foreground">{rw.tgl_sk}</TableCell>
+                    <TableCell className="text-right">
+                      <Button variant="outline" size="sm" className="text-xs h-7">
+                        Unduh Salinan SK
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </CardContent>

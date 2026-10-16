@@ -19,6 +19,7 @@ import {
   Trash2,
   AlertCircle,
   FileCheck2,
+  Award,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -122,6 +123,13 @@ export default function PengaturanUmumAdminPage() {
         jam_operasional_sekretariat: branding.jam_operasional_sekretariat,
         logo_url: branding.logo_url,
         favicon_url: branding.favicon_url,
+        label_early_warning_kp: branding.label_early_warning_kp,
+        template_prediksi_tmt: branding.template_prediksi_tmt,
+        label_menuju_golongan: branding.label_menuju_golongan,
+        label_jenis_usulan: branding.label_jenis_usulan,
+        label_countdown_kp: branding.label_countdown_kp,
+        label_subteks_tmt: branding.label_subteks_tmt,
+        label_judul_checklist_kp: branding.label_judul_checklist_kp,
       });
 
       if (error) {
@@ -284,6 +292,10 @@ export default function PengaturanUmumAdminPage() {
           <TabsTrigger value="branding" className="text-xs font-semibold gap-1.5">
             <Sparkles className="h-3.5 w-3.5 text-indigo-600" />
             Branding Beranda & Aplikasi
+          </TabsTrigger>
+          <TabsTrigger value="kepangkatan" className="text-xs font-semibold gap-1.5">
+            <Award className="h-3.5 w-3.5 text-indigo-600" />
+            Banner Kepangkatan
           </TabsTrigger>
           <TabsTrigger value="profil" className="text-xs">Profil Pemda & BKPSDM</TabsTrigger>
           <TabsTrigger value="lokalisasi" className="text-xs">Waktu & Regional</TabsTrigger>
@@ -1087,6 +1099,189 @@ export default function PengaturanUmumAdminPage() {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        {/* ========================================================================= */}
+        {/* TAB: BANNER KEPANGKATAN & EARLY WARNING */}
+        {/* ========================================================================= */}
+        <TabsContent value="kepangkatan" className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            {/* Form Konfigurasi (Kiri: 7 Kolom) */}
+            <div className="lg:col-span-7 space-y-6">
+              <Card className="shadow-xs border-slate-200">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="text-base font-semibold text-slate-900">
+                        Template Teks & Label Banner Kepangkatan
+                      </CardTitle>
+                      <CardDescription className="text-xs text-slate-500 mt-0.5">
+                        Dikelola dinamis melalui tabel <code className="text-indigo-600 font-mono">public.app_settings</code> untuk portal ASN.
+                      </CardDescription>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <label className="text-xs font-semibold text-slate-700 block mb-1">
+                      1. Template Badge Early Warning
+                    </label>
+                    <Input
+                      value={branding.label_early_warning_kp || ""}
+                      onChange={(e) => setBranding({ ...branding, label_early_warning_kp: e.target.value })}
+                      placeholder="Status Early Warning: {fase} Kenaikan Pangkat"
+                      className="text-xs"
+                    />
+                    <p className="text-[11px] text-slate-400 mt-1">
+                      Gunakan variabel <code className="text-indigo-600 font-mono">{"{fase}"}</code> untuk menyisipkan fase notifikasi (contoh: H-180, H-90, H-30).
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-semibold text-slate-700 block mb-1">
+                      2. Template Judul Prediksi TMT
+                    </label>
+                    <Input
+                      value={branding.template_prediksi_tmt || ""}
+                      onChange={(e) => setBranding({ ...branding, template_prediksi_tmt: e.target.value })}
+                      placeholder="Prediksi TMT Kenaikan Pangkat: {tmt}"
+                      className="text-xs"
+                    />
+                    <p className="text-[11px] text-slate-400 mt-1">
+                      Gunakan variabel <code className="text-indigo-600 font-mono">{"{tmt}"}</code> untuk menyisipkan tanggal TMT resmi (contoh: 1 April 2026).
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-xs font-semibold text-slate-700 block mb-1">
+                        3. Label Menuju Golongan
+                      </label>
+                      <Input
+                        value={branding.label_menuju_golongan || ""}
+                        onChange={(e) => setBranding({ ...branding, label_menuju_golongan: e.target.value })}
+                        placeholder="Menuju Golongan"
+                        className="text-xs"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-semibold text-slate-700 block mb-1">
+                        4. Label Jenis Usulan
+                      </label>
+                      <Input
+                        value={branding.label_jenis_usulan || ""}
+                        onChange={(e) => setBranding({ ...branding, label_jenis_usulan: e.target.value })}
+                        placeholder="Jenis Usulan"
+                        className="text-xs"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-xs font-semibold text-slate-700 block mb-1">
+                        5. Template Hitung Mundur Sisa Hari
+                      </label>
+                      <Input
+                        value={branding.label_countdown_kp || ""}
+                        onChange={(e) => setBranding({ ...branding, label_countdown_kp: e.target.value })}
+                        placeholder="{hari} Hari Lagi"
+                        className="text-xs"
+                      />
+                      <p className="text-[11px] text-slate-400 mt-1">
+                        Gunakan variabel <code className="text-indigo-600 font-mono">{"{hari}"}</code> untuk jumlah sisa hari.
+                      </p>
+                    </div>
+                    <div>
+                      <label className="text-xs font-semibold text-slate-700 block mb-1">
+                        6. Label Keterangan TMT
+                      </label>
+                      <Input
+                        value={branding.label_subteks_tmt || ""}
+                        onChange={(e) => setBranding({ ...branding, label_subteks_tmt: e.target.value })}
+                        placeholder="TMT Terhitung Mulai Tanggal"
+                        className="text-xs"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-semibold text-slate-700 block mb-1">
+                      7. Judul Checklist Kelengkapan Berkas
+                    </label>
+                    <Input
+                      value={branding.label_judul_checklist_kp || ""}
+                      onChange={(e) => setBranding({ ...branding, label_judul_checklist_kp: e.target.value })}
+                      placeholder="Checklist Kelengkapan Syarat Berkas Administrasi:"
+                      className="text-xs"
+                    />
+                    <p className="text-[11px] text-slate-400 mt-1">
+                      Item berkas checklist dibaca langsung dari master <code className="text-indigo-600 font-mono">public.aturan_kepangkatan</code> per jenjang golongan.
+                    </p>
+                  </div>
+
+                  <div className="pt-4 border-t border-slate-100 flex justify-end">
+                    <Button
+                      onClick={handleSaveBranding}
+                      disabled={savingBranding}
+                      className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold gap-1.5"
+                    >
+                      <Save className="h-4 w-4" />
+                      {savingBranding ? "Menyimpan ke Database..." : "Simpan Pengaturan Banner"}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Live Preview (Kanan: 5 Kolom) */}
+            <div className="lg:col-span-5 space-y-4">
+              <div className="sticky top-6 space-y-4">
+                <Card className="border-indigo-100 bg-slate-50/50 shadow-xs">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                        <Eye className="h-3.5 w-3.5 text-indigo-600" />
+                        Pratinjau Live Banner ASN
+                      </span>
+                      <Badge variant="secondary" className="text-[10px] bg-indigo-50 text-indigo-700 border border-indigo-200">
+                        Halaman /pegawai/kepangkatan
+                      </Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="border-2 border-indigo-400/40 bg-gradient-to-r from-indigo-50 via-white to-slate-50 rounded-xl p-5 shadow-xs space-y-4">
+                      <div className="flex flex-col gap-3">
+                        <div className="space-y-1">
+                          <div className="inline-flex items-center gap-1.5 rounded-full bg-indigo-100 px-2.5 py-0.5 text-[11px] font-semibold text-indigo-700">
+                            <Clock className="h-3 w-3" />
+                            <span>
+                              {(branding.label_early_warning_kp || "Status Early Warning: {fase} Kenaikan Pangkat").replace("{fase}", "H-180")}
+                            </span>
+                          </div>
+                          <h3 className="text-base font-extrabold text-slate-900 leading-tight">
+                            {(branding.template_prediksi_tmt || "Prediksi TMT Kenaikan Pangkat: {tmt}").replace("{tmt}", "1 April 2026")}
+                          </h3>
+                          <p className="text-xs text-slate-500">
+                            {branding.label_menuju_golongan || "Menuju Golongan"}: <strong>Pembina Tingkat I (IV/b)</strong> • {branding.label_jenis_usulan || "Jenis Usulan"}: <strong>Reguler</strong>
+                          </p>
+                        </div>
+
+                        <div className="pt-2 border-t border-slate-200/60 flex items-center justify-between">
+                          <p className="text-xl font-extrabold text-indigo-600 tabular-nums">
+                            {(branding.label_countdown_kp || "{hari} Hari Lagi").replace("{hari}", "180")}
+                          </p>
+                          <p className="text-[10px] text-slate-400">
+                            {branding.label_subteks_tmt || "TMT Terhitung Mulai Tanggal"}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </div>
         </TabsContent>
       </Tabs>
     </div>

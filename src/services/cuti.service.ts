@@ -94,6 +94,19 @@ export const cutiService = {
     }
     return data;
   },
+
+  async batalkan(id: string): Promise<boolean> {
+    const supabase = createClient();
+    const { error } = await supabase
+      .from("cuti")
+      .update({ status: "dibatalkan" })
+      .eq("id", id);
+    if (error) {
+      console.error("Gagal membatalkan pengajuan cuti:", error);
+      return false;
+    }
+    return true;
+  },
 };
 
 export function useCutiList(pegawaiId?: string) {
@@ -119,16 +132,21 @@ export function useSaldoCuti(pegawaiId?: string, tahun = new Date().getFullYear(
   const [saldo, setSaldo] = useState({ jatah: 12, terpakai: 0, sisa: 12 });
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const fetchSaldo = () => {
     if (!pegawaiId) {
       setLoading(false);
       return;
     }
+    setLoading(true);
     cutiService.getSaldo(pegawaiId, tahun).then((res) => {
       setSaldo(res);
       setLoading(false);
     });
+  };
+
+  useEffect(() => {
+    fetchSaldo();
   }, [pegawaiId, tahun]);
 
-  return { saldo, loading };
+  return { saldo, loading, refresh: fetchSaldo };
 }

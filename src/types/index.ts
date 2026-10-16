@@ -430,6 +430,15 @@ export interface AppSettings {
   enforce_mfa_admin?: boolean;
   instansi_config?: Record<string, any>;
 
+  // Template & Label Banner Kepangkatan
+  label_early_warning_kp?: string;
+  template_prediksi_tmt?: string;
+  label_menuju_golongan?: string;
+  label_jenis_usulan?: string;
+  label_countdown_kp?: string;
+  label_subteks_tmt?: string;
+  label_judul_checklist_kp?: string;
+
   updated_at?: string;
   updated_by?: string | null;
 }

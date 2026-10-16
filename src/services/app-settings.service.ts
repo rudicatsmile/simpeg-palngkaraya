@@ -35,6 +35,15 @@ export const DEFAULT_APP_SETTINGS: AppSettings = {
   auto_lock_session_menit: "30",
   enforce_mfa_admin: true,
   instansi_config: {},
+
+  // Template & Label Banner Kepangkatan
+  label_early_warning_kp: "Status Early Warning: {fase} Kenaikan Pangkat",
+  template_prediksi_tmt: "Prediksi TMT Kenaikan Pangkat: {tmt}",
+  label_menuju_golongan: "Menuju Golongan",
+  label_jenis_usulan: "Jenis Usulan",
+  label_countdown_kp: "{hari} Hari Lagi",
+  label_subteks_tmt: "TMT Terhitung Mulai Tanggal",
+  label_judul_checklist_kp: "Checklist Kelengkapan Syarat Berkas Administrasi:",
 };
 
 const ALLOWED_MIME_TYPES = [
@@ -196,6 +205,43 @@ export const appSettingsService = {
             : DEFAULT_APP_SETTINGS.enforce_mfa_admin,
         instansi_config: cfg,
 
+        // Template & Label Banner Kepangkatan
+        label_early_warning_kp:
+          data.label_early_warning_kp ||
+          localCache.label_early_warning_kp ||
+          cfg.label_early_warning_kp ||
+          DEFAULT_APP_SETTINGS.label_early_warning_kp,
+        template_prediksi_tmt:
+          data.template_prediksi_tmt ||
+          localCache.template_prediksi_tmt ||
+          cfg.template_prediksi_tmt ||
+          DEFAULT_APP_SETTINGS.template_prediksi_tmt,
+        label_menuju_golongan:
+          data.label_menuju_golongan ||
+          localCache.label_menuju_golongan ||
+          cfg.label_menuju_golongan ||
+          DEFAULT_APP_SETTINGS.label_menuju_golongan,
+        label_jenis_usulan:
+          data.label_jenis_usulan ||
+          localCache.label_jenis_usulan ||
+          cfg.label_jenis_usulan ||
+          DEFAULT_APP_SETTINGS.label_jenis_usulan,
+        label_countdown_kp:
+          data.label_countdown_kp ||
+          localCache.label_countdown_kp ||
+          cfg.label_countdown_kp ||
+          DEFAULT_APP_SETTINGS.label_countdown_kp,
+        label_subteks_tmt:
+          data.label_subteks_tmt ||
+          localCache.label_subteks_tmt ||
+          cfg.label_subteks_tmt ||
+          DEFAULT_APP_SETTINGS.label_subteks_tmt,
+        label_judul_checklist_kp:
+          data.label_judul_checklist_kp ||
+          localCache.label_judul_checklist_kp ||
+          cfg.label_judul_checklist_kp ||
+          DEFAULT_APP_SETTINGS.label_judul_checklist_kp,
+
         updated_at: data.updated_at,
         updated_by: data.updated_by,
       };
@@ -271,6 +317,17 @@ export const appSettingsService = {
         if (payload.alamat_kantor) fallbackPayload.alamat_sekretariat = payload.alamat_kantor;
         if (payload.email_dinas) fallbackPayload.email_sekretariat = payload.email_dinas;
         if (payload.no_telepon) fallbackPayload.telepon_sekretariat = payload.no_telepon;
+
+        // Simpan field banner kepangkatan ke instansi_config sebagai fallback
+        fallbackPayload.instansi_config = {
+          label_early_warning_kp: payload.label_early_warning_kp,
+          template_prediksi_tmt: payload.template_prediksi_tmt,
+          label_menuju_golongan: payload.label_menuju_golongan,
+          label_jenis_usulan: payload.label_jenis_usulan,
+          label_countdown_kp: payload.label_countdown_kp,
+          label_subteks_tmt: payload.label_subteks_tmt,
+          label_judul_checklist_kp: payload.label_judul_checklist_kp,
+        };
 
         const { data: fallbackData } = await supabase
           .from("app_settings")

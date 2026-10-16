@@ -70,3 +70,54 @@ export function hitungPrediksiKenaikanPangkat(
       : undefined,
   };
 }
+
+export const DAFTAR_GOLONGAN_PANGKAT: Record<string, string> = {
+  "I/a": "Juru Muda",
+  "I/b": "Juru Muda Tingkat I",
+  "I/c": "Juru",
+  "I/d": "Juru Tingkat I",
+  "II/a": "Pengatur Muda",
+  "II/b": "Pengatur Muda Tingkat I",
+  "II/c": "Pengatur",
+  "II/d": "Pengatur Tingkat I",
+  "III/a": "Penata Muda",
+  "III/b": "Penata Muda Tingkat I",
+  "III/c": "Penata",
+  "III/d": "Penata Tingkat I",
+  "IV/a": "Pembina",
+  "IV/b": "Pembina Tingkat I",
+  "IV/c": "Pembina Utama Muda",
+  "IV/d": "Pembina Utama Madya",
+  "IV/e": "Pembina Utama",
+};
+
+export const URUTAN_GOLONGAN = [
+  "I/a", "I/b", "I/c", "I/d",
+  "II/a", "II/b", "II/c", "II/d",
+  "III/a", "III/b", "III/c", "III/d",
+  "IV/a", "IV/b", "IV/c", "IV/d", "IV/e"
+];
+
+export function getNextGolongan(currentGolongan: string): string {
+  const idx = URUTAN_GOLONGAN.indexOf(currentGolongan);
+  if (idx !== -1 && idx < URUTAN_GOLONGAN.length - 1) {
+    return URUTAN_GOLONGAN[idx + 1];
+  }
+  return currentGolongan;
+}
+
+export function formatTanggalIndo(dateStr: string): string {
+  if (!dateStr) return "-";
+  try {
+    const parts = dateStr.split("-").map(Number);
+    if (parts.length < 3) return dateStr;
+    const bulan = [
+      "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+      "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+    ];
+    return `${parts[2]} ${bulan[parts[1] - 1]} ${parts[0]}`;
+  } catch {
+    return dateStr;
+  }
+}
+
